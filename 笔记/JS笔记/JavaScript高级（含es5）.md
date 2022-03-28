@@ -800,19 +800,11 @@ JS的数据类型分为：
 为了防止有稀疏数组，因此for循环遍历数组在开发中用的较少
 一般用forEach和for in
 
-forEach、map、filter、（some、every	这俩返回值是一个Boolean），这5个方法的参数只有两个
-
-> 参数1：回调函数（回调函数的形参有item，index，arr）
->
-> 参数2：this希望指向的地方（用得很少）
-
 #### for in
 
 语法：`for(var key in arr)`
 
 数组有多少长度，就遍历多少次，key是arr [ i ] 的值
-
-注：该方法对象也有，因此并非数组独有方法
 
 #### forEach()
 
@@ -827,14 +819,6 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 > index：数组索引值（下标）		可以省略
 >
 > arr：当前被遍历的数组（数组本身，即arr）	可以省略
->
-> > 回调函数之后的参数，this指向（几乎不同）
-> >
-> > 正常情况下，forEach的this指向window，但如果加了参数2，则this指向 参数2
-> >
-> > 如：`arr.forEach(function(item,index,arr){} , Object)`	此时this就由window改为了Object
-> >
-> > 但如果回调函数是箭头函数，则参数2不起作用（因为箭头函数没有this）
 
 注：通过forEach返回的是一个新数组（）
 
@@ -893,10 +877,6 @@ console.log(newArr2);		//结果[]
 即：返回的是Boolean值
 
 语法：array.filter ( function ( currentValue , index , arr ) )
-
-#### map()
-
-> 正常情况下，需要配合return使用，最后返回一个新数组
 
 ### 对象
 

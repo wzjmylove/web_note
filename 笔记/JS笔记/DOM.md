@@ -610,7 +610,7 @@ tag同class
 
 语法：document.querySelectorAll ( ' ' )		或者		XX.querySelectorALL ( ' ' )	（作用：获取XX下的所有子元素）
 
-返回与该模式匹配的**所有元素**，且为一个伪数组
+返回与该模式匹配的**所有元素**，且为一个**伪数组**
 
 ### 特殊标签的获取
 

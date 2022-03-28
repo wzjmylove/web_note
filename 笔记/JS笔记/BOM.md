@@ -109,7 +109,7 @@ window 对象给我们提供了一个 location 属性用于获取或设置窗体
 | location.replace() | 不记录历史，直接替换当前页面  （不能后退）                   |
 | location.reload()  | 不给参数：重新加载页面（从缓存中加载）；果参数为true  强制刷新  ctrl + f5  （从服务器中加载） |
 
-#### location.search()
+#### location.search
 
 一般用于form表单提交的数据
 
