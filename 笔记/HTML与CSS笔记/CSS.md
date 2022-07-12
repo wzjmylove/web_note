@@ -36,7 +36,7 @@
 
 5.多个“键对值”（声明与声明之间）之间用英文 " ; " 开隔
 
-![css_standar](F:\学习\前端培训\笔记\image\css_standar.png)
+![css_standar](..\image\css_standar.png)
 
 ------
 
@@ -112,7 +112,7 @@ HTML元素以id属性来设置id选择器，CSS中id选择器以	**“ # "**	来
 
 选择除自己以外的所有兄弟
 
-如： ![css_selector_brother](F:\学习\前端培训\笔记\image\css_selector_brother.png)		结果：![css_selector_brother_result](F:\学习\前端培训\笔记\image\css_selector_brother_result.png)
+如： ![css_selector_brother](..\image\css_selector_brother.png)		结果：![css_selector_brother_result](..\image\css_selector_brother_result.png)
 
 
 
@@ -124,13 +124,13 @@ HTML元素以id属性来设置id选择器，CSS中id选择器以	**“ # "**	来
 
 注：后代选择器会**包括父元素下的所有元素，含子、孙等**
 
-如：							![css_selector_descendant](F:\学习\前端培训\笔记\image\css_selector_descendant.png)
+如：							![css_selector_descendant](..\image\css_selector_descendant.png)
 
 ### 子选择器	' > '
 
 子元素选择器（子选择器）**只**能**选择**作为**某元素的最近一级子元素**。简单理解就是选亲儿子元素。
 
-如：							![css_selector_son](F:\学习\前端培训\笔记\image\css_selector_son.png)（该图是选择的孙子)
+如：							![css_selector_son](..\image\css_selector_son.png)（该图是选择的孙子)
 
 ### 并集选择器	' , '
 
@@ -221,7 +221,7 @@ font-size属性定义字体大小
 
 ### 字体倾斜 `font-style`
 
-![css_font-style](F:\学习\前端培训\笔记\image\css_font-style.png)
+![css_font-style](..\image\css_font-style.png)
 
 很少给文字加斜体，反而要给斜体标签( em , i )改为不倾斜字体
 
@@ -457,7 +457,7 @@ background-size一般单独出来写，不复合
 
 div里面放图片的时候，会发现图片与div下边框有间隙	如：
 
-![css_aligned](F:\学习\前端培训\笔记\image\css_aligned.png)
+![css_aligned](..\image\css_aligned.png)
 
 方法一：
 
@@ -465,7 +465,7 @@ div里面放图片的时候，会发现图片与div下边框有间隙	如：
 
 属性值：top、text-top、**middle**（最常用）、baseline（默认）、text-bottom、bottom
 
-![css_aligned_attribute](F:\学习\前端培训\笔记\image\css_aligned_attribute.png)
+![css_aligned_attribute](..\image\css_aligned_attribute.png)
 
 方法二：直接将图片设置为块元素：display : block	
 
@@ -495,7 +495,7 @@ CSS有三个非常重要的三个特性∶**层叠性**、**继承性**、**优�
 
 **权重越高，优先级越高；权重一样执行层叠性**
 
-![css_quan_zhong](F:\学习\前端培训\笔记\image\css_quan_zhong.png)
+![css_quan_zhong](..\image\css_quan_zhong.png)
 
 **继承没有权重，不管父元素权重，因此0的权重都比继承高**
 
@@ -603,7 +603,7 @@ CSS3新增内容	阴影不占盒子位置
 
 语法：box-shadow : h-shadow	v-shadow	blur	spread	color	inset
 
-![css_box_shadow_attribute](F:\学习\前端培训\笔记\image\css_box_shadow_attribute.png)
+![css_box_shadow_attribute](..\image\css_box_shadow_attribute.png)
 
 blur不能使用百分数，只能px
 
@@ -670,7 +670,7 @@ text-shadow : h-shadow	v-shadow	blur	color
 
 3、**父级添加after伪元素**：加content : " "	和	display : block	和	clear : both
 
-**4、父级添加双伪元素清除外边距重合问题和浮动问题**：![css_cleanfloat](F:\学习\前端培训\笔记\image\css_cleanfloat.png)
+**4、父级添加双伪元素清除外边距重合问题和浮动问题**：![css_cleanfloat](..\image\css_cleanfloat.png)
 
 ------
 

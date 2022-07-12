@@ -73,7 +73,7 @@ JS中所有任务可以分成两种，一种是同步任务（synchronous），�
 
 由于主线程不断的重复获得任务、执行任务、再获取任务、再执行，所以这种机制被称为事件循环（ event loop）：
 
-![js_同异步](F:\学习\前端培训\笔记\image\js_同异步.png)
+![js_同异步](..\image\js_同异步.png)
 
 图片解释：异步执行时，先注册其回调函数，再放入Event Queue中，当主程序空的时候，执行Event Queue
 				  即只有当主程序走完时，才会执行异步
@@ -115,7 +115,7 @@ console.log(4);
 
 ​																								**保留关键字**
 
-![js_bianliang_keywords](F:\学习\前端培训\笔记\image\js_bianliang_keywords.png)
+![js_bianliang_keywords](..\image\js_bianliang_keywords.png)
 
 注：
 
@@ -424,7 +424,7 @@ var fn = fn1();
 fn();	//结果：5
 ```
 
-![js-zuoyongyu](F:\学习\前端培训\笔记\image\js-zuoyongyu.png)
+![js-zuoyongyu](..\image\js-zuoyongyu.png)
 
 ------
 
@@ -474,7 +474,7 @@ function f1 ( ) {
 	console.log(b) ;
 	console.log(a) ;
 
-结果：9  9  9  9  9  9  错误
+结果： 9  9  9  9  9  9  错误
 ```
 
 例二：
@@ -495,16 +495,16 @@ function f1 ( ) {
 ```js
 /*	 预解析后	*/
 var a ;
-	function f1 ( ) {
-		var b ;
-		b = 9 ;
-		console.log (a) ;
-		console.log (b) ;
-		var a ;
-		a = '123' ;	
-	}
-	a = 18 ;
-	f1 ( ) ;
+function f1 ( ) {
+	var b ;
+	var a ;
+	b = 9 ;
+	console.log (a) ;
+	console.log (b) ;
+	a = '123' ;	
+}
+a = 18 ;
+f1 ( ) ;
 
 结果：undefined  9
 ```
@@ -562,15 +562,15 @@ console.log(a);
 
 ```js
 function b(x){
-            console.log(x);
-            var x = 123;
-            console.log(x);
-            function x (){};
-            console.log(x);
-            var c = function(){}
-            console.log(c); 
-        }
-        b(22);
+	console.log(x);
+	var x = 123;
+	console.log(x);
+	function x (){};
+	console.log(x);
+	var c = function(){}
+	console.log(c); 
+}
+b(22);
 
 结果：ƒ x (){}
 	 123
@@ -827,6 +827,8 @@ console.log(String.fromCharCode(str.charCodeAt(3)));
 
 #### substring ( )
 
+> 作用：截取字符串
+>
 > 语法：str.substring ( indexStart  [, indexEnd] )
 >
 > 参数：indexStart：需要截取的第一个字符的索引，该索引位置的字符作为返回的字符串的首字母。
@@ -866,7 +868,7 @@ for (let i = 0; i < str.length; i++) {
 
 > 语法：str.split ( [separator  [, limit]] )
 >
-> 作用：使用指定的分隔符字符串将一个String对象分割成子字符串数组
+> 作用：使用指定的分隔符字符串将一个String对象分割成子字符串数组（即：以指定字符做参考将字符串切成一个数组）
 >
 > 参数：separator：指定表示每个拆分应发生的点的字符串（字符串或者正则表达式）
 > 							  也可以理解为，字符串以separator作为参考，并切片
@@ -889,8 +891,6 @@ var str = '小红=99 小白=100 小黄=70 小黑=66 小绿=88';
 console.log(aa.split(' '));	//表示以空格作为切片的依据/参考
 //结果：[ '小红=99', '小白=100', '小黄=70', '小黑=66', '小绿=88' ]
 ```
-
-
 
 #### slice ( )
 
@@ -941,7 +941,7 @@ new Array( )	或	arr = [1 , 2 , 3 , 'wz'...]
 
 > var arr1 = new Array();       	//创建一个空数组
 >
-> var arr2 = new Array(2);         //这个2表示数组的长度为2，里面有两个空的数组元素
+> var arr2 = new Array(2);         //这个2表示数组的长度为2，里面有两个空的数组元素	[ empty*2 ]
 >
 > var arr3 = new Array(2 , 3);    //等价于[ 2 , 3 ]   这时候存了2，3两个元素的数组
 
@@ -1115,8 +1115,6 @@ new Date( )
 数字型：2021,4,23
 
 字符型：' 2021-4-23 15:35:30 ' 或者 ' 2021/4/23 15:35:30 '   		**年月份和时分必须有个空格**
-
-**注：月份是0-11）（1月-12月），星期是0-6（星期天-星期六）**
 
 #### 日期的格式化
 
