@@ -484,7 +484,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 ### 通过id获取
 
-id是一个单数，在使用innerHTML与IinnerText的时候不需要加下标
+id是一个单数，在使用innerHTML与IinnerText的时候不需要加下标index
 
 语法：document.getElementById ( ' ' );
 
@@ -494,9 +494,11 @@ id是一个单数，在使用innerHTML与IinnerText的时候不需要加下标
 
 class获取的方式是一个集合（**伪数组**），要想获取集合中的某一个标签，需要通过下标获取（方式同数组）
 
-注：就算只有一个标签，也需要有下标 ‘ 0 ’ 
+注：就算只有一个标签，也需要有下标 ‘ 0 ’ (index = 0)
 
-tag同class
+tagname同class
+
+如：`let div = document.getElementByTag('div')   div[0] = xxx`
 
 ### 通过name获取
 
@@ -660,13 +662,13 @@ bg.style.backgroundColor = '#FADCFA';
 bg.style.fontSize = '20px';
 ```
 
-注：凡是CSS样式里面有 - 的，都取消掉 - ，换成驼峰命名 ；等号后面必须有引号
+注：凡是CSS样式里面有 - 的，都取消掉 - ，换成**驼峰命名** ；等号后面必须有引号
 
 ##### 复合样式设置
 
-批量修改：XXX.style.cssText = '  XXX  '  +  '  XXX  ' + ....	；(可以换行)
+批量修改：`XXX.style.cssText = '  XXX  '  +  '  XXX  ' + ....;`	(可以换行)
 
-或			   XXX.style.cssText = '  XXX  ;  XXX  ;  '	;	（这个不能换行）
+或			   `XXX.style.cssText = '  XXX  ;  XXX  ;  '	;`	（这个不能换行）
 
 或	es6中的模板字符串：
 
@@ -678,17 +680,21 @@ bg.style.fontSize = '20px';
 
 即可做到对一个标签的CSS修改多样（若JS里没有CSS已有的代码，则保留CSS效果，即CSS里有长宽但JS没有却仍保留CSS的长宽）
 
-如：btn.style.cssText = 'color : red' + 'backgroundColor : pink'
+如：
+
+```js
+btn.style.cssText = 'color : red' + 'backgroundColor : pink'
+```
 
 注：也需要驼峰命名法
 
 ### 设置元素的类名（className）
 
-XXX.className = ' XX '
+`XXX.className = 'XX'`
 
 注：不需要加 ' . ' ，且可以增加多个（直接空格隔开就好）					使用行内样式较多，类名较少
 
-例：`btn.className = 'cleanfix bd'	//此时btn所绑定的标签会多cleanfix和bd两个类名`
+例：`btn.className = 'cleanfix bd'`				此时btn所绑定的标签会多cleanfix和bd两个类名
 
 注：给标签追加类名时，用传统方法（xxx.className = ' xxxx '）会导致类名覆盖
 
@@ -770,7 +776,6 @@ XXX.className = ' XX '
 
 ```html
 <body>
-    
     <ul>
         <li>一</li>
         <li>二</li>
@@ -837,7 +842,7 @@ XXX.className = ' XX '
 
 #### 同级节点
 
-语法：XXX.xxx
+语法：XX.xxx
 
 如：ul.previousSibling
 
@@ -900,7 +905,7 @@ XXX.innerHTML获取的是该标签内的 文本	；	因此在直接赋值时会�
 
 ###### 添加
 
-> 前面追加：node.insertBefore(child)
+> 前面追加：node.insertBefore(child , 指定元素)
 >
 > 后面追加：node.appendChild(child , 指定元素)
 

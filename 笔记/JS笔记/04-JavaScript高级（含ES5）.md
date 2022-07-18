@@ -184,7 +184,6 @@ var pfns = {
     	console.log(this.name + '会唱歌');
 	}
 }
-
 ```
 
 2、通过原型的方式
@@ -199,7 +198,7 @@ Student.prototype.job = '前端开发';
 
 var wz = new Student('王泽', 18);
 var wzj = new Student('王紫晶',16);
-console.log(wz);		//结果：Student { name: '王泽', age: 18 }	这里面没有job属性，但该实例对象下的prototype对象																 里面有job属性
+console.log(wz);		//结果：Student { name: '王泽', age: 18 }	这里面没有job属性，但该实例对象下的prototype对象里面有job属性
 console.log(wz.job);	//结果：前端开发
 
 wzj.age === wz.age 		//结果：false
@@ -246,7 +245,7 @@ wz.skill();	//结果：干饭
 wz.sing();	//结果：王泽开始唱歌
 ```
 
-注：new 一个实例对象不能省略new
+注：创建 一个实例对象不能省略new
 
 #### 增、改属性/方法
 
@@ -355,9 +354,7 @@ console.log(wz.sex); //结果：undefined
 >
 > 2、实现继承
 
-### 构造函数需要原型对象的原因
-
-让多个实例之间通用（/共享）方法使用一个引用，减少空间的占用
+构造函数需要原型对象的原因：让多个实例之间通用（/共享）方法使用一个引用，减少空间的占用
 
 ### 原型对象的两个属性
 

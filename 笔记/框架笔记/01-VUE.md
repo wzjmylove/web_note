@@ -18,6 +18,8 @@ Model-View-ViewModel
 >
 > viewModel 管理者：指Vue对象
 
+------
+
 ## 引入方式
 
 ### vue2引入
@@ -53,6 +55,8 @@ CDN
 ```html
 <script src="https://unpkg.com/vue@next"></script>
 ```
+
+------
 
 ## 实例创建
 
@@ -133,11 +137,15 @@ vm.$mount('#app');
 
 注：在Vue3中，data是一个组件，起必须是函数，必须带return（原因：组件是可复用的）（返回的对象都是独立的，避免了数据污染）
 
+------
+
 ## 响应式原理
 
 > Vue2：es5中的  Object.defineProperty
 >
 > Vue3：es6中的  proxy
+
+------
 
 ## 插值表达式
 
@@ -175,7 +183,7 @@ vm.$mount('#app');
 
 指带有v-属性的特殊属性。
 
-在Vue给HTML元素增加了自定义属性，它们都是以 “v-” 开头了。并且一些特殊的指令可以带参数和修饰符指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
+在Vue给HTML元素增加了自定义属性，它们都是以 “v-” 开头了（原因：表明这是一个vue指令）。并且一些特殊的指令可以带参数和修饰符指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
 
 三种将数据渲染到页面的方法：插值运算符、v-text、v-html
 
@@ -370,6 +378,24 @@ vm.$mount('#app');
 >
 > 作用：将一个数组遍历或枚举一个对象循环显示，需要结合着 in 或 of 来使用
 
+#### :key
+
+> 语法：`:key="xx"`
+>
+> 参数：xx：一般为number、string
+>
+> 目的：使标签与key的值绑定，实现高效的更新虚拟DOM
+>
+> 使用：官方推荐在使用v-for时，给对应的元素或组件添加上一个:key属性
+>
+> 注：key的值不易与下标index相同，因为index会随着数组变化而变化
+
+> 如果不加key，那对于节点的增加或删除，只要触发节点操作，就执行一次；操作多次，执行多次
+> 加了key，因为key与id一样，具有唯一性，因此对于节点的操作只有一次
+>
+> 即：无key，状态默认绑定的是位置（index 下标）
+> 有key，状态根据key值绑定的内容（建议用id绑定，以达到唯一性）
+
 ### v-bind
 
 v-bind和v-on都是事件指令
@@ -398,7 +424,7 @@ v-bind和v-on都是事件指令
 > 如：
 >
 > ```html
-> <p id="app" :style=[one,two]>数组样式</p>
+> <p id="app" :style="[one,two]">数组样式</p>
 > <script>
 >     let vm = new Vue({
 >         data: {
@@ -501,9 +527,135 @@ v-bind和v-on都是事件指令
 </script>
 ```
 
-### 修饰符
+------
 
-##### 通用修饰符
+## 自定义指令
+
+定义指令尽量不用大写字母
+
+### 全局指令
+
+> 语法：`Vue.directive(id, definition)`
+>
+> 参数：
+>
+> > id：指令名称（一般自定义）		id在节点元素中，需要绑定才能生效（即：`<div v-id> xxx </div>`，其中id为直接取的名字，如v-focus等）
+> >
+> > definition：1、定义对象，其属性一般是提供的钩子函数（如bind、inserted等）
+> > 				  2、定义函数，对应钩子函数bind和update
+>
+> 注：全局指令需要写在vue实例之前
+
+如：加载完页面光标自动在第二个输入框
+
+```html
+<div id="app">
+    姓名：<input type="text"> <br> 特长：<input type="text" v-focus>
+</div>
+<script>
+    Vue.directive('focus', {
+        inserted: (el) => {
+            el.focus();
+        }
+    })
+    let vm = new Vue({
+        el: '#app',
+        data: {}
+    })
+</script>
+```
+
+### 局部指令
+
+> 语法：在Vue实例中加入directives属性	`directives:{ id: definition }`		（当definition为函数时， “ : ” 和 function 可以一起省略）
+>
+> 作用域：只作用在绑定的标签中
+
+如：转化大写
+
+```html
+<div id="app">
+    <h3 id="app" v-upper-text="msg"></h3>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            msg: 'i am a message'
+        },
+        directives: {
+            'upper-text': (el, binding) => {
+                el.innerHTML = binding.value.toUpperCase();
+            }
+        }
+    })
+</script>
+```
+
+### 过滤器
+
+> 作用：自定义一个过滤器，最终实现文本转化、数据类型转变等
+>
+> 作用地方：双花括号插值	和	v-bind表达式
+>
+> 过滤器包含：
+>
+> > 全局过滤器：Vue.filter
+> >
+> > 局部过滤器：filters{}
+>
+> 注：利用methods方法也可以代替过滤器，但其语义化不明确（所有事情需要方法来处理），耦合性高
+
+全局过滤器
+
+> 语法：`Vue.filter(id, function)`
+>
+> 使用：`<div> {{ xxx | id }} </div>`
+
+局部过滤器
+
+> 语法：在Vue实例中使用，同局部指令
+
+如：
+
+```html
+<div id="app">
+    <h3 id="app">猪肉价格：{{price | formatPrice("￥/kg")}}</h3>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            price: 158
+        },
+        filters: {
+            formatPrice(price, unit) {
+                return (price / 10).toFixed(2) + unit;
+            }
+        }
+    })
+</script>
+```
+
+注：
+
+> 1、过滤器的函数中，必须return，否则输出undefined
+>
+> 2、过滤器是使用在插值表达式中，用 | 和变量隔开	（ | 叫做管道符）
+>
+> 3、过滤器函数可以传参，在标签中，变量默认为第一个参数，括号内跟的参数为第二个（详见例子的 unit 形参）
+> 即：如果只需要处理一个参数，则函数不需要加括号
+>
+> 4、多个过滤器函数，可以用多个 | 隔开（如：`<div> {{ msg | fn1 | fn2 }} </div>`）
+> 注意后面的fn2可能会覆盖fn1
+
+------
+
+## 修饰符
+
+### 通用修饰符
 
 通用修饰符：这些修饰符是所有事件都通用的
 
@@ -515,7 +667,7 @@ v-bind和v-on都是事件指令
 | .self      | 只能由自身触发事件                            |
 | .once      | 该事件只会触发一次                            |
 
-##### 按键修饰符
+### 按键修饰符
 
 按键修饰符：这些修饰符是便捷一些按键操作的，比如要判断按键的键值的时候
 
@@ -549,3 +701,89 @@ v-bind和v-on都是事件指令
 </scripts>
 ```
 
+------
+
+# Vue的实例方法
+
+## 数据
+
+### Vue.set()
+
+通过下标索引到的数组，并更改时，Vue实例得到更改，但是视图层并不发生改变
+
+解决：使用replace方法更改数组	或	使用Vue.set()
+
+> 语法：`Vue.set(target,index,value)`	（全局起作用）	||		`vm.$set(target,index,value)`		（只有vm实例起作用）
+>
+> 参数：
+>
+> > target：目标（需要更改的对象，一般为数组或对象）
+> >
+> > index：下标
+> >
+> > value：更改后的内容
+
+如：
+
+```js
+let vm = new Vue({
+    data: {
+        arr = [1, 'a', 2]
+    },
+    methods: {
+        Do() {
+            this.$set(this.arr, 1, 'b');			//结果：arr = [1, 'b', 2]
+        },
+    }
+}).$mount('#app')
+```
+
+------
+
+# 钩子函数
+
+一个指令定义对象可以提供如下几个钩子函数 (均为可选)：
+
+| **函数**         | **描述**                                                     |
+| ---------------- | ------------------------------------------------------------ |
+| bind             | 只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。 |
+| inserted         | 被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。 |
+| update           | 所在组件的 VNode 更新时调用，但是可能发生在其子 VNode 更新之前。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新 。 |
+| componentUpdated | 指令所在组件的 VNode 及其子 VNode 全部更新后调用。           |
+| unbind           | 只调用一次，指令与元素解绑时调用。                           |
+
+指令钩子函数会被传入以下参数（有顺序）：
+
+| **函数** | **描述**                                                     |
+| -------- | ------------------------------------------------------------ |
+| el       | 指令所绑定的元素，可以用来直接操作 DOM。                     |
+| binding  | 包含指令相关的对象，包含以下这些属性：name（id名）、rawName（v-id名）、modifiers（一个对象，其属性可以查看id的修饰符）、expression（该id绑定的内容，即 = 后面的内容）、value（ = 后面如果是变量，则value是变量的值）、oldValue、arg |
+| vnode    | vue 编译生成的虚拟节点。                                     |
+| oldVnode | 上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用。 |
+
+如：
+
+```html
+<body>
+    <input type="text" id="ipt" v-focus.trim="msg">
+</body>
+<script>
+    Vue.directive('focus', {
+            inserted: (el, binding) => {
+                console.log(binding);		
+            }
+        })
+        let vm = new Vue({
+            el: '#ipt',
+            data: {
+                msg: 'i am a message'
+            }
+        })
+</script>
+```
+
+打印结果：					![Vue_钩子函数_binding](E:\笔记\image\Vue_钩子函数_binding.png)
+
+------
+
+> 
