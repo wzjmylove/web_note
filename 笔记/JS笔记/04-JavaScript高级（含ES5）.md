@@ -600,12 +600,12 @@ son1.study();
 >
 > ```js
 > function Father(name) {
->     this.friends = ['张三', '李四']
+>    	this.friends = ['张三', '李四']
 > }
 > 
 > function Son(name, age) {
->     this.name = name,
->         this.age = age
+>    	this.name = name,
+>    	this.age = age
 > }
 > 
 > Son.prototype = new Father();
@@ -703,7 +703,6 @@ function Father(name) {
 function Son(name, age) {
     Father.call(this, name);
     //Father.apply(this,[name])
-    
     this.name = name;
     this.age = age
 }
@@ -942,14 +941,10 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 >
 > 作用：获取数组的下标，不能单独使用
 >
-> 用法：
->
-> > `arr.keys().next().value`		一次给一个下标，且只能从0依次计算
-> >
-> > `for(ley index of arr.keys())`	遍历数组的全部下标，index就是下标（for of 是es6的）
+> 用法：`for(index of arr.keys())`	遍历数组的全部下标，index就是下标（for of 是es6的）
 >
 > 注：Object的keys()、values()、entries()数组都有，用法都同上（一般都用在for of中）
->
+> 
 
 可以结合Object.keys()看，并结合 ES6笔记 -> for of 循环
 
@@ -973,7 +968,7 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 > >
 > > > 回调函数之后的参数，this指向（几乎不用）
 > > >
-> > > 正常情况下，forEach的this指向window，但如果加了参数2，则this指向 参数2
+> > > 正常情况下，forEach的this指向window，但如果加了参数2，则this指向 参数2（参数1是fn）
 > > >
 > > > 如：`arr.forEach(function(item,index,arr){} , Object)`	此时this就由window改为了Object
 > > >
@@ -981,7 +976,35 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 > > > 但我实操是有用的，暂且将他视作有用把。。。
 >
 > 返回：undefined
->
+
+#### map()
+
+> 正常情况下，需要配合return使用，最后返回一个新数组
+> 如果不用return，那么就map相当于一个forEach
+> 而forEach用return会返回undefined
+
+```js
+const fruits = [
+    {name: '苹果',read: 10}, 
+    {name: '香蕉',read: 8.8}, 
+    {name: '菠萝',read: 5}, 
+    {name: '草莓',read: 28.88}
+]
+let newFurits = fruits.map((item, index, arr) => {
+    let obj = {};
+    //数据处理
+    obj.shop = '*' + item.name;
+    obj.price = '￥' + item.read;
+    return obj;
+})
+console.log(newFurits);
+//结果：0: {shop: '*苹果', price: '￥10'}
+//1: {shop: '*香蕉', price: '￥8.8'}
+//2: {shop: '*菠萝', price: '￥5'}
+//3: {shop: '*草莓', price: '￥28.88'}
+
+//该map方法引用后，不会对原数组fruit产生影响
+```
 
 #### filter()
 
@@ -1039,35 +1062,6 @@ console.log(newArr2);		//结果 undefined
 > 作用：用于检测数组中的元素是否满足指定的条件，如果有一个条件满足，则表达式为true，且剩余元素不再执行条件判断；如果所有元素都不满足条件，则返回false
 >
 > 返回：Boolean值
-
-#### map()
-
-> 正常情况下，需要配合return使用，最后返回一个新数组
-> 如果不用return，那么就map相当于一个forEach
-> 而forEach用return会返回undefined
-
-```js
-const fruits = [
-    {name: '苹果',read: 10}, 
-    {name: '香蕉',read: 8.8}, 
-    {name: '菠萝',read: 5}, 
-    {name: '草莓',read: 28.88}
-]
-let newFurits = fruits.map((item, index, arr) => {
-    let obj = {};
-    //数据处理
-    obj.shop = '*' + item.name;
-    obj.price = '￥' + item.read;
-    return obj;
-})
-console.log(newFurits);
-//结果：0: {shop: '*苹果', price: '￥10'}
-//1: {shop: '*香蕉', price: '￥8.8'}
-//2: {shop: '*菠萝', price: '￥5'}
-//3: {shop: '*草莓', price: '￥28.88'}
-
-//该map方法引用后，不会对原数组fruit产生影响
-```
 
 #### reduce()
 
@@ -1495,8 +1489,8 @@ console.log(aa.hasOwnProperty('toString'));	//结果：false	因为该方法在�
 
 ```js
 // Array：返回数组对象本身
-var array = ["ABC", true, 12, -5];
-console.log(array.valueOf() === array);   // true
+var arr = ["ABC", true, 12, -5];
+console.log(arr.valueOf() === arr);   // true
 
 // Number：返回数字值
 var num =  15.26540;
