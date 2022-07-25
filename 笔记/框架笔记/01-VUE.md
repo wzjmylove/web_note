@@ -1562,7 +1562,73 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 </script>
 ```
 
+### 非父子组件通讯
 
+非父子组件的通讯主要是依靠事件车来实现
+
+> 中央事件总线，又名eventBus事件车
+>
+> 实质：创建一个vue实例，通过一个空的vue实例作为桥梁实现vue组件间的通信
+
+#### 事件车
+
+> 1、在脚手架中，创建一个公共js文件，用来传递信息
+>
+> 2、引入vue.js
+>
+> 3、创建空的vue实例
+>
+> 4、向外暴露
+
+eventBus.js：
+
+```js
+// 引入vue.js
+import Vue from "vue";
+// 创建空的Vue实例
+let bus = new Vue();
+//提供外部引入的接口
+export default bus;
+```
+
+#### 触发事件
+
+> 1、在需要传递数据的地方引入事件车，此处引入是eventBus.js下的bus
+>
+> 2、给bus绑定$emit，与子传父的类似，只不过是**`bus.$emit("事件名", "携带参数")`**
+>
+> 3、在需要接受数据的地方引入事件车，同时给bus绑定$on，即 **`bus.$on("事件名", function() {})`**	fn为回调函数
+>
+> 注：
+>
+> > 如果存在多个接收数据，则它们是同时接受的（即，可以实现广播）
+> >
+> > 一个事件车bus，可以存在多个$emit，他们互不干扰
+
+传递数据：
+
+```js
+methods: {
+	deliver() {
+		console.log(bus);		//可以查看到bus是一个vue实例
+		bus.$emit("deliverData", this.list);		//传递data里的list数据
+	},
+}
+```
+
+接收数据：
+
+```js
+mounted() {
+	bus.$on("deliverData", (val) => {
+		console.log(val);	//val就是传递的值
+	});
+}
+```
+
+#### 销毁
+
+**`bus.$off("事件名")`**
 
 ------
 
@@ -1740,13 +1806,227 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 ## vue-cli3
 
+### 创建
+
+1、vue create 项目名
+
+2、配置设置
+
+3、启动项目：cd 项目名 	然后		npm run serve
+
+### 使用
+
 1、创建目录以及引用：在cli3项目中，main.js里面创建的vue实例一般只引用App，自己的vue文件等都是在components文件下下创建，然后再去App.vue里面引用（而非直接在main.js里面引用）
 
-2、向外暴露：在自己的vue文件下的<script>标签里，利用`export default{}`，完成向外暴露。同时也可以实现子组件的引入，只需在<script>标签里import，然后`export default { components:{xxx} }`，即可引入xxx子组件。
-
+2、向外暴露：在自己的vue文件下的`<script>`标签里，利用`export default{}`，完成向外暴露。
 `export default {}`：里面可以包含vue实例的所有属性，如props、name等
 
+3、引入：在App.vue文件下的`<script>`标签里import，然后`export default { components:{xxx} }`，即可引入xxx子组件。
+
 ------
+
+# VueRouter
+
+本质：建立url和页面之间的映射关系
+
+使用路由而不使用`<a>`的原因：vue是单页（一个html）复应用
+
+## 基本使用
+
+1、安装插件：npm install vue-router --save
+
+2、在模块化工程中使用它
+
+> 原因：vue-router是一个插件
+>
+> 方法：
+>
+> > (1) 导入路由对象，并且调用 Vue.use(VueRouter)
+> >
+> > ```js
+> > import Vue from 'vue' 
+> > import VueRouter from 'vue-router' 
+> > Vue.use(VueRouter)
+> > ```
+> >
+> > (2) 创建路由实例，并且传入路由映射配置，并在Vue实例中挂载创建的路由实例
+> >
+> > 此时需要在main.js文件中进行配置（或单独设置一个router.js文件，并在main.js只能怪引入）
+> >
+> > ```js
+> > import Vue from 'vue';
+> > import App from './App.vue';
+> > import VueRouter from 'vue-router';
+> > //启动路由功能
+> > Vue.use(VueRouter);
+> > 
+> > //引用组件
+> > import Home from './View/Home.vue';
+> > import About from './View/About.vue';
+> > 
+> > 
+> > //1、配置路径与组件的映射关系（即路由路径和组件的对应关系）
+> > const routes = [{
+> >      path: '/home', //路由路径（即：网页的网址后缀）
+> >      component: Home //路由跳转的组件（即：网特跳转的页面）
+> >  },
+> >  {
+> >      path: '/about',
+> >      component: About
+> >  }
+> > ]
+> > 
+> > //2、创建路由实例，传入路由映射配置
+> > const router = new VueRouter({
+> >  routes, //传入路由配置
+> > });
+> > 
+> > new Vue({
+> >  router, //3、挂载路由
+> >  render: h => h(App),
+> > }).$mount('#app')
+> > ```
+> >
+> > **注**：routes是固定写法，不能改变（更换为任何其他单词都不可以）
+> >
+> > (3) 在App.vue文件中引入router-view标签，以展示 路由渲染的组件的页面
+> >
+> > ```vue
+> > <template>
+> > <div id="app">
+> >  <h1>我是router-view外的内容</h1>
+> >  <!-- 利用router-view 展示 路由渲染的组件的页面 -->
+> >  <router-view></router-view>
+> > </div>
+> > </template>
+> > ```
+> >
+> > 注：在router-view标签之外的标签，不会因为页面跳转而变化
+> > 即：router-view切换的是挂载的组件，其余内容不发生改变
+> > 因此，此处的h1标签会一直存在
+> >
+> > router-view是可以被router-link代替
+
+### router-link
+
+该标签是一个vue-router中已经内置的组件, 它会被渲染成一个`<a>`标签
+
+> 作用：展示 路由渲染的组件的页面
+>
+> 语法：`<router-link to="/xx"> </router-link>`		作用在App.vue文件下
+>
+> 参数：`to="/xx"`：表示跳转到xx组件页面上
+>
+> 注：
+>
+> > 1、router-link和router-view一样，必须使用在App.vue文件里面
+> >
+> > 2、每次切换页面，`<a>`进入的页面就会追加一个类名，其余则去掉这个类名
+
+#### active-class
+
+active-class是router-link的一个属性
+
+> 作用：正常的**class类名将无法使用**，需要用`active-class=""`来添加自定义类名，最后就可以在style中使用自定义的类名了
+>
+> 语法：`<router-link to="/xx" active-class="自定义类名"> </router-link>`			作用在App.vue文件下
+>
+> 缺点：active-class不适合多个标签同时绑定一个类名（原因：代码冗余）
+>
+> 解决：在需要添加自定义类名的组件中的router实例中添加`linkActiveClass`
+
+#### linkActiveClass
+
+linkActiveClass是VueRouter实例的一个属性
+
+> 作用：添加自定义类名
+>
+> 语法：作用在main.js或router.js下
+>
+> ```js
+> const router = new VueRouter({
+>     routes, 
+>     linkActiveClass： "自定义类名"			//此时就给routes数组中的所有组件追加了 自定义类名
+> });
+> ```
+
+#### tag
+
+tag是router-link的一个属性
+
+> 作用：正常的router-link会被渲染成`<a>`标签，加入tag后可以渲染成自定义标签
+>
+> 语法：`<router-link to="/xx" tag="标签"> </router-link>`		作用在App.vue文件下
+>
+> 参数：标签：可以是`button、li、span、p`等
+>
+> 注：
+>
+> > 1、不管渲染成什么标签，类名只能通过active-class或linkActiveClass方式添加
+> >
+> > 2、会留下路由history记录（浏览器可以通过history实现页面的前进后退操作）
+
+#### replace
+
+replace是router-link的一个属性
+
+> 作用：自动删除该标签的history记录
+>
+> 语法：`<router-link to="/xx" replace> </router-link>`				作用在App.vue文件下
+>
+> 注：加了replace的标签才无history，没有加的仍然可以使用前进后退
+
+## 路由的默认路径
+
+> redirect使用原因：在路由使用中，默认打开的网页是 / 这个根路径，如果需要更改默认打开路径，需要使用redirect进行配置
+>
+> 作用域：routes这个路由配置的一个属性
+>
+> 语法：作用在main.js或router.js文件下
+>
+> ```js
+> const routes = [{
+> 	path: '/',
+> 	redirect: '/home'
+> }]
+> ```
+>
+> 注：path可以为 * 		表示除了被注册的路径外，输入其他人和路径，都会被重定向到redirect的网页
+
+## 路由模式
+
+路由模式有两种：hash和history
+
+hash：在默认路由使用中，浏览器url自带一个`/#`，表示这是一个哈希路由，表示有历史记录，且页面跳转不会造成页面刷新
+
+history：url不带`/#`，且不保存历史记录，页面跳转也不会造成页面刷新
+
+### 路由模式的改变
+
+> 语法：
+>
+> ```js
+> const router = new VueRouter({
+>     routes, 
+>     mode: 'hash'
+> });
+> ```
+>
+> 
+
+## 动态路由
+
+> 定义：路由（path）和组件（component）存在匹配关系，此时称之为动态路由
+>
+> 实际现象：浏览器的url中，可能因为用户名不同而不同（如github的网址）
+>
+> 作用：动态路由是一种传递数据的方式
+
+
+
+
+
+
 
 
 
