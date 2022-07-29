@@ -700,6 +700,10 @@ btn.style.cssText = 'color : red' + 'backgroundColor : pink'
 
 解决办法：`xxx.classList.add('xx')`	追加名为xx的类（这是一个方法）
 
+`xxx.classList.remove('xx')`		删除xx类
+
+`xxx.classList.toggle('xx')`		切换xx类
+
 ------
 
 ## 节点操作
