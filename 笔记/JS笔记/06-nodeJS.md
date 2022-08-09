@@ -866,6 +866,22 @@ app.post('/user', (req, res) => {});
 >
 > 语法：`app.use()`
 
+#### 解决跨域
+
+cors方法
+
+```js
+//本地服务器解决跨域
+app.all('*', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Methods', '*');		//允许请求方法：如post、get、put
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    next();
+});
+```
+
 #### 托管静态资源
 
 > 作用：通过它，我们可以非常方便地创建一个静态资源服务器

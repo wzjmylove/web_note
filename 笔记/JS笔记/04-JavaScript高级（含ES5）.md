@@ -762,7 +762,7 @@ var son2 = new Son('Max', 18);		//结果会打印	我的名字是Max
 function inherit(obj) {
     //临时构造函数
     function Fn() {
-        uname: '王'
+        this.uname = '王'
     }
     Fn.prototype = obj;
     Fn.prototype.constructtor = Fn
@@ -778,14 +778,15 @@ var Father = {
 		console.log(this.name + '爱唱歌');
     }
 }
-    //注：父类不能使用构造函数；且子类原有属性和方法都没有用，都会被覆盖
+    //注：父类不能使用构造函数
 
 var son1 = inherit(Father);
 var son2 = inherit(Father);
 
 console.log(son1);
 console.log(son1.friends);
-console.log('调用子类原有的属性或方法：', son1.uname); //且子类原有属性和方法都没有用，都会被覆盖
+console.log('调用子类原有的属性或方法：', son1.uname); //会打印子类的属性
+
 //调用父类的方法
 son1.hobby(); //结果：hobby的this指向Father，因此能调用Father里面的属性name
 
@@ -931,7 +932,7 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 
 语法：`for(var key in arr)`
 
-数组有多少长度，就遍历多少次，key是arr [ i ] 的值
+数组有多少长度，就遍历多少次，key是 index 的值
 
 注：该方法对象也有，因此并非数组独有方法
 

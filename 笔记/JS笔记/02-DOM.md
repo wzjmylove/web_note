@@ -631,20 +631,32 @@ tagname同class
 
 ### 属性设置
 
-xxx.属性名 = xxx ;
+#### 方法一
 
-如：
+> 语法：dom.属性名 = xxx ;
+>
+> 如：
+>
+> ```js
+> var btn = document.querySelector("btuuon");	//获取点击
+> btn.onclick = function(){
+>     btn.value = '属性value改变'
+> }
+> ```
+>
+> 注：给`<a>`标签触发事件时，需要取消默认事件	
+> 方法：执行一个空事件
+> 给`<a>`的`herf`一个`javascript:;`	或者	给`<a>`的`herf`一个`javascript:void(0);`
 
-```js
-var btn = document.querySelector("btuuon");	//获取点击
-btn.onclick = function(){
-    btn.value = '属性value改变'
-}
-```
+#### 方法二
 
-注：给`<a>`标签触发事件时，需要取消默认事件	
-方法：执行一个空事件
-给`<a>`的`herf`一个`javascript:;`	或者	给`<a>`的`herf`一个`javascript:void(0);`
+> 语法：`dom.setAttribute(prop, value)`
+>
+> 参数：
+>
+> > prop：属性名
+> >
+> > value：属性值
 
 ### 样式设置
 

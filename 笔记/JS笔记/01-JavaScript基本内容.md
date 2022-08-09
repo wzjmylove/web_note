@@ -139,9 +139,9 @@ es5	有6种：
 
 ​									BooLean			   布尔值型		 true、false
 
-​									undefined			  未定义
+​									undefined			  未定义													（undefined是变量，不过是全局的，因此可以 var 定义， 也可以在块作用域内 let 定义；因此为了获取到undefined，常用`void 0`）
 
-​									null						空
+​									null						空													
 
 ​					复杂数据：
 

@@ -137,7 +137,7 @@ vm.$mount('#app');
 </body>
 ```
 
-注：在Vue3中，data是一个组件，起必须是函数，必须带return（原因：组件是可复用的）（返回的对象都是独立的，避免了数据污染）
+注：在Vue3中，data是一个组件，必须是函数，必须带return（原因：组件是可复用的）（返回的对象都是独立的，避免了数据污染）
 
 ------
 
@@ -291,7 +291,7 @@ vm.$mount('#app');
 >    	let vm = new Vue({
 >            data: {
 >            msg: 'hello Vue',
->            sex: '男'			//单选按钮会默认选择value和sex匹配的按钮（如果input不给value，则插值表达式会显示null）
+>            sex: '男'			//单选按钮会默认选择value和sex匹配的按钮（如果radio不给value，则点击按钮后，插值表达式 sex 会显示null）
 >    		}
 >    	}).$mount('.app')
 > </script>
@@ -910,9 +910,9 @@ let vm = new Vue({
 
 结果：只打印一次 ‘我只执行一次’
 
-注：total是一个属性，因此**在标签中不加括号**
+注：total是计算属性，是一个属性，因此**在标签中不加括号**
 
-> 计算属性默认有两个属性：getter和setter（getter默认都有，用于获取值，setter用于设置/修改值）
+> 计算属性默认有两个属性：getter和setter（getter默认都有，用于获取值，但不能修改值；setter用于设置/修改值）		因为其底层是Object.defineProperty
 >
 > 语法：
 >
@@ -1754,7 +1754,7 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 > 作用：当组件需要在多个父组件多个界面展示的时候，将内容放在子组件插槽中，父组件只需要告诉子组件使用什么方式展示界面。
 >
-> 注：v-slot只能用在 template模板 或 components 里面
+> 注：`v-slot只能用在 template模板` 或 components 里面
 
 ```html
 <div id="app">
@@ -1800,6 +1800,24 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 返回的是一个对象，因此可以在插值表达式里面调用属性：cba.abc
 
+### 具名插槽和v-slot合用
+
+```html
+<div id="app">
+    <my-son>
+    	<template v-slot:item>我是插槽</template>
+    </my-son>
+</div>
+
+<template id="mySon">
+    <div>
+        <slot name="item"></slot>
+    </div>
+</template>
+```
+
+
+
 ------
 
 # 脚手架
@@ -1830,6 +1848,23 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 本质：建立url和页面之间的映射关系
 
 使用路由而不使用`<a>`的原因：vue是单页（一个html）复应用
+
+解决路由向同一个路由跳转时（重复点击一个路由），报错：
+
+> 方法1、安装老版本router
+>
+> npm i vue-router@3.0 -S
+>
+> 方法2、在main.js或router.js中添加
+>
+> ```js
+> const originalPush = VueRouter.prototype.push;
+> VueRouter.prototype.push = location => originalPush.call(this, location).catch(err => err)
+> ```
+>
+> 
+
+
 
 ## 基本使用
 
@@ -1921,7 +1956,7 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 >
 > > 1、router-link和router-view一样，必须使用在App.vue文件里面
 > >
-> > 2、每次切换页面，`<a>`进入的页面就会追加一个类名，其余则去掉这个类名
+> > 2、每次切换页面，被渲染成的`<a>`进入的页面就会追加一个类名，其余则去掉这个类名
 
 #### active-class
 
@@ -1988,17 +2023,19 @@ router-link可以实现路由的快速跳转，但需要使用tag属性才能将
 >
 > ```vue
 > <template>
->     <div id="app">
->         <button @click="toHome">跳转</button>
->     </div>
+>  <div id="app">
+>      <button @click="toHome">跳转</button>
+>  </div>
 > </template>
 > 
 > <script>
->     export default{
->     	toHome(){
->     	    this.$router.push('/home');
->     	}    	    
->     }
+>  export default{
+>      methods:{
+>          toHome() {
+>              this.$router.push('/home');
+>          }
+>      }  	    
+>  }
 > </script>
 > ```
 >
@@ -2012,7 +2049,7 @@ router-link可以实现路由的快速跳转，但需要使用tag属性才能将
 >
 > 注：
 >
-> > push跳转的页面是有缓存的
+> > push跳转的页面是有缓存的，同时会保存历史记录
 > >
 > > push括号内的内容，不仅支持字符串，也支持对象
 
@@ -2077,6 +2114,10 @@ history：url不带`/#`，且不保存历史记录，页面跳转也不会造成
 > 作用：动态路由是一种传递数据的方式
 
 ### 传参
+
+params和name搭配使用，query和path搭配使用
+
+#### params传参
 
 在routes中path里面追加
 
@@ -2156,7 +2197,30 @@ history：url不带`/#`，且不保存历史记录，页面跳转也不会造成
 > > ![Vue_动态路由_例子](..\image\Vue_动态路由_例子.png)
 >
 
-## 嵌套路由
+#### params传参
+
+> to的另外使用方法：跟对象 `<router-link :to="{}">`	（以下name均指data中的属性）
+>
+> > `{name:'USER', params: {id: name}}`		name表示该router-link的一个名字，params则是实现路由跳转，同样能够实现动态路径拼接
+> > id：是指routes中 `/:id`
+> >
+> > 注：不写path，默认path就是 / 根路径
+> 
+>此外，push和replace也通用，括号内的参数可以是对象，方法同router-link中to跟对象一样
+> 如：` this.$router.push({name:'XX', params: {id: 'xxx'}})`
+
+#### query传参
+
+> 也需要to跟对象 `<router-link :to="{}">`
+>
+> > `{path:'/XX', query: {id: 11, sex: 'male'}}`			此时浏览器url将会为：`http://localhost:8080/XX?id=11&sex=male`
+>
+> 此外，push和replace也通用，括号内的参数可以是对象，方法同router-link中to跟对象一样
+> 如：` this.$router.push({name:'XX', params: {id: 'xxx'}})`
+
+
+
+## 嵌套路由/子路由
 
 使用嵌套路由，需要用children属性
 
@@ -2190,11 +2254,747 @@ history：url不带`/#`，且不保存历史记录，页面跳转也不会造成
 > 注：**使用router-link标签，to属性中也需要注意 “/” ，重定向redirect也一样，需补完**
 > 			**必须写成 `<router-link to="/home/news">`**
 
-## 
+## 路由守卫
 
+作用：用来监听监听路由的进入和离开的
 
+vue-router提供了beforeEach和afterEach的钩子函数, 它们会在路由即将改变前和改变后触发
 
+beforeEach作用：拦截、
 
+afterEach作用：页面跳转后的提示、欢迎等
+
+参数：
+
+> to：目标导航的路由信息对象（即目标路由）
+>
+> from：离开的路由信息对象
+>
+> next：一个方法，是否要进入导航，如果需要进入导航就执行 next()		对于全局路由守卫，必须有next()，否则路由不会进行跳转
+>          next的括号可以跟参数，一般跟跳转的页面路径 如：`next('/home')`
+
+### 在全局路由中使用路由守卫
+
+> 语法：
+>
+> > `router.beforeEach((to, from, next) => {})`
+> >
+> > `router.afterEach((to, from) => {})`			无next
+
+### 独享守卫
+
+> 定义：当跳转到指定路由时，触发的守卫
+>
+> 只有beforeEach
+>
+> 语法：写在routes里面  
+>
+> ```js
+> const routes = [
+> 	{
+>         path: '/home',
+>         name: 'home',
+>         component: Home,
+>         beforeEach(to, from, next) {}
+>     }
+> ]
+> ```
+
+### 组件内的守卫
+
+又称组件内的钩子函数
+
+beforeRouteEnter()		表示组件实例还未创建，因此this无法指向该实例
+
+beforeRouteLeave()	   表示离开组件时触发。此时实例已注册完毕
+
+beforeRouteUpdate	   表示该路由的路由信息变化后触发（如子路由的切换）		实例已注册完毕
+
+------
+
+# Axios
+
+Axios是一个基于promise的HTTP库，可以用在浏览器和node.js中
+
+特点：
+
+> 1、支持从浏览器中创建XMLHttpRequests
+>
+> 2、支持从node.js中创建http请求
+>
+> 3、支持Promise
+>
+> 4、能够拦截请求和响应
+>
+> 5、转换请求数据和响应数据
+
+## 使用
+
+> 安装
+> 引入
+> 发起请求
+
+### 安装
+
+npm i axios
+
+### 引入
+
+全局引入
+
+> 先在main.js中：import axios from 'axios'
+>
+> 然后挂载到vue原型上：Vue.prototype.$http = axios
+
+### 发起请求
+
+#### 普通请求
+
+##### get请求
+
+```js
+axios.get('http://xxxx')				//可以写成 axion('hettp://xxx')		因为axios默认是get请求
+	.then((res) => {})
+	.catch((err) => {})
+```
+
+注：res中的data属性才是获取的数据，res对象中还包括status等
+
+##### post请求
+
+```js
+axios.post('http://xxxx', data)		
+	.then((res) => {})
+	.catch((err) => {})
+```
+
+data：需要传输的参数，一般是obj或str格式
+
+#### 指定请求参数请求
+
+方法一：在url上更改
+
+```js
+axios.get('http://xxx?userId=3')			//此时就可以获得userId为3的数据				
+	.then((res) => {})
+	.catch((err) => {})
+```
+
+方法二：指定params参数
+
+```js
+axios.get('http://xxx', {params: {userId: 3}})						
+	.then((res) => {})
+	.catch((err) => {})
+```
+
+------
+
+# Vuex
+
+定义：Vuex是实现组件全局状态（数据）管理的一种机制，可以方便实现组件之间的数据共享
+
+每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着应用中大部分的**状态 (state)**
+
+Vuex 和单纯的全局对象有以下两点不同：
+
+> 1、Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。
+>
+> 2、**不能直接改变** store 中的状态。改变 store 中的状态的唯一途径就是提交 (commit) mutation**
+> 如果直接调用$store.state进行修改，数据在页面显示的内容会变，但是devtools没法监听到（实际上数据是变了的）
+
+注：在Vuex中，state是状态，也称为数据
+
+## 使用
+
+### 安装
+
+npm i Vuex
+
+### 引入
+
+一般在脚手架中会新建store文件夹，并在里面创建index.js文件
+
+在index.js中
+
+```js
+import Vuex from 'vuex';	 	 //引入			此时Vuex下并没有任何方法和属性
+
+Vue.use(Vuex);					//挂载到Vue上
+
+const store = new Vuex.Store({	 //创建实例方法
+    state: {},					//存储状态
+    mutations: {},
+    getters: {},
+    actions: {},
+    modules: {}
+});
+
+export default store			//导出
+```
+
+| 属性      | 描述                                                         |
+| --------- | ------------------------------------------------------------ |
+| state     | 包含了store中存储的各个状态（里面可以定义自己需要共享的数据）<br />如：`state: {id:1, sex:'男'}` |
+| getters   | 类似于 Vue 中的计算属性，根据其他 getter 或 state 计算返回值 |
+| mutations | 一组方法，是改变store中状态的执行者，只能是同步操作（页面变化，devtools也发生变化；异步任务的话，devtools无法侦听到） |
+| actions   | 一组方法，其中可以包含异步操作                               |
+| moudules  | Module是store分割的模块，每个模块拥有自己的state、getters、mutations、actions |
+
+在main.js中
+
+```js
+new Vue({
+	//注入vuex
+    store,
+})
+```
+
+### 组件使用共享数据
+
+#### 显示
+
+$store.state.xxx		xxx为共享的数据名
+
+#### 修改 commit
+
+> 在store中：
+>
+> ```js
+> const store = new Vuex.Store({				//this指向store实例对象
+> 	state: {
+>      		num: 0
+> 	},
+> 	mutations: {
+>     		fn(state, payload) {}						//此时的state形参就是state对象，避免了this的使用；payload就是携带的参数
+> 	}
+> })
+> ```
+>
+> 在methods中：
+>
+> > 字符串风格
+> >
+> > ```js
+> > methods: {
+> > 	Fn() {
+> >         	this.$store.commit('fn', payload)		//字符串 fn 对应 mutations 中的 fn 函数；且传payload参数给mutations
+> >    	}
+> > }
+> > ```
+>
+> > 对象风格
+> >
+> > ```js
+> > store.commit({
+> > 	type: 'fn',					//type的 fn 对应 mutations 中的 fn 函数
+> >     变量名: 变量值				//在mutations中的payload得到的是这个对象，要使用变量值，则需要 payload.变量名
+> > })
+> > ```
+> >
+> > 整个对象都作为载荷（payload）传给 mutation 函数
+
+注：如果state是一个引用类型，如果直接给其追加或修改属性，页面是不会更新的，可以利用深拷贝，将原有的复制一遍并重新传给state
+
+如：
+
+```js
+const store = new Vuex.Store({
+	state: {
+		obj: {
+            id: 1,
+            sex: 'male'
+        }
+	},
+	mutations: {
+		fn(state, payload) {
+			state.obj = { ...state.obj , name: 'xx'}			//深拷贝了obj，并追加了name属性
+             //或者	Vue.set(state.obj, name: 'xx')
+		}						
+	}
+})
+```
+
+## actions
+
+和mutations差不多，与mutations的不同点：
+
+> 1、不过actions可以包含异步操作，而mutations只能包含同步操作
+>
+> 2、action 提交的是 mutation，而不是直接变更状态
+
+> 语法：
+>
+> > 在store中：
+> >
+> > ```js
+> > actions: {
+> > 	fn (context, payload) {
+> >    		context.commit('mutations内的函数名', 参数);		//本操作就是：actions先提交mutation，mutation再去改变state数据
+> >    	}
+> > }
+> > ```
+>
+> 在methods中：
+>
+> ```js
+> store.dispatch('fn')
+> ```
+
+异步的代码可以放在actions中，然后用dispatch去触发actions
+
+如：
+
+```js
+actions: {
+  incrementAsync ({ commit }) {
+    setTimeout(() => {
+      commit('increment')
+    }, 1000)
+  }
+}
+```
+
+## getters
+
+可以认为是 store 的计算属性，getter的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。
+
+> 语法：
+>
+> 在store中：
+>
+> ```js
+> getters: {
+> 	fn(state, getters) {},
+> 	fn1() {}
+> }
+> ```
+>
+> 这样就能在fn函数内调用getters的其他函数，如 `fn(state, getters) { getters.fn1 }`
+>
+> 在methods中：
+>
+> ```js
+> store.getters.fn				 //如果fn不带形参 或 只有 state 形参，则可以省略括号
+> ```
+
+> 当methods中的`store.getters.fn(a)`需要传a过来时，需要将getters的fn改为：
+>
+> ```js
+> getters: {
+> 	fn: (state) => (形参) => {}			//此时形参接收到的实参就是 a 
+> }
+> 
+> //或者
+> 
+> getters: {
+>     fn(state, getters) {
+>         return (形参) => {}				
+>     }
+> }
+> ```
+>
+> 
+
+注：在getters声明的函数，必须有return
+
+------
+
+# Vue3
+
+与Vue2对比的特点：Vue3中设计了一套强大的composition组合APi代替了Vue2中的option API ,复用性更强了，对TypeScript有更好的支持
+
+区别（只有部分）：
+
+> 1、创建：Vue3直接使用createAPP创建；Vue2则需要new一个Vue实例，再利用render渲染
+>
+> 2、在vue文件中，舍弃了propsData的父子通讯，采用defineProps进行自定义props属性
+>      reactive和ref：在setup中返回的数据不是响应式的，必须使用reactive或ref函数来包装，才能进行引用
+
+vite创建：npm init vite 自定义名称
+
+## 组合API
+
+Composition API就是组合API，是Vue3.x的新特性
+
+作用：提供了代码的共享，提高了代码的可读性（虽然Vue2的options API也能实现代码共享，但是其只能在特定的区域使用，比如数据只能在data中定义）
+
+### setup()
+
+> 定义：是组合API的入口函数			（computed、watch、methods等都是定义在setup中）
+>
+> 语法：`setup(props,context) {}`
+>
+> 参数：
+>
+> > props：组件传入的属性，指的是props对象（props对象类似Vue2的props）
+> >
+> > context：上下文对象			包含emit（对应Vue2的$emit）属性、slots插槽属性、attrs
+>
+> 注：在setup中不能用this访问到Vue实例了，只能通过context来访问Vue实例中最常用的属性
+
+setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似将数据写在data中），需要将其return出去	如：`setup() { let num=0; return {num} }`
+但是此时的 变量或方法 并非响应式的数据（即：无法实现双向绑定 v-model）
+解决：利用ref 或 reactive
+
+注：
+
+> 1、在Vue3.2之后，setup函数写在 `<script setup></script>`里面了，同时不需要return，但同样需要ref和reactive
+>
+> 2、以下所有都是在setup函数里面，如 ref ~ watch、生命周期
+
+### ref()
+
+> 作用：ref()函数接受一个数据，返回一个响应式的数据对象
+>
+> 引入：`import { ref } from "vue"`
+>
+> 语法：`ref(值)`
+>
+> 在setup中的双向绑定：
+>
+> ```js
+> setup(){
+> 	let num = ref(0);			//此时的num就可以双向绑定了
+>    	console.log(num);			//此时num成了一个对象，value属性是num的值
+> 	return { num }
+> }
+> ```
+>
+> 注：ref括号内只能有一个值，对于多个值，需要用数组包裹
+>
+> 在setup中，对于数组值的获取：
+>
+> ```js
+> setup(){
+> 	let arr = ref(['abc', 123, 'boy']);			
+>    	console.log(arr.value[0])			//是arr.value[index]，而非arr[index]
+> 	return { arr }
+> }
+> ```
+>
+> 注：如果将对象分配为 ref 值，则可以通过 reactive 方法使该对象具有高度的响应式
+
+### reactive()
+
+> 作用：reactive() 函数接收一个普通对象，返回一个响应式的数据对象
+>
+> 引用：`import { reactive } from "vue"`
+>
+> 语法：`reactive(obj)`
+>
+> 注：
+>
+> > 1、通过reactive生成的，不需要像ref一样通过value属性来获得值，而是其本身就是对象数据
+> >
+> > ```js
+> > setup(){
+> > 	let obj = reactive({name: 'wz'});
+> >    	console.log(obj.name);				//结果：'wz'
+> >    	return { obj }
+> > }
+> > ```
+> >
+> > 2、对于obj对象中包含引用数据类型，若不想连续打点调用，可以使用toRefs
+> >
+> > ```js
+> > setup(){
+> > 	let obj = reactive({
+> >         person: {
+> > 		   name: 'wz',
+> >             age: 18
+> >         }
+> >     });
+> >     return { ...obj }			//将对象拓展后返回			缺点：person对象并  ！非响应式数据 ！
+> > }
+> > 
+> > 外界引用只需person.name
+> > ```
+
+### toRefs()
+
+> 作用：把响应式的对象转化成普通对象
+>
+> 引用：`import { toRefs } from "vue"`
+>
+> 语法：`toRefs(obj)`
+>
+> ```js
+> setup(){
+> 	let obj = reactive({
+>         person: {
+> 		   name: 'wz',
+>             age: 18
+>         }
+>     });
+> 	return { 
+>         ...toRefs(obj) 				//相当于：先用toRefs把obj变成普通对象，在拓展开，然后依次对其属性如person进行reactive包装
+>     }			
+> }
+> 
+> 外界就可以正常使用person.name，同时person.name也是响应式数据，可以实现双向绑定
+> ```
+>
+
+### computed()
+
+> 作用：与Vue2的计算属性一样，因此向外界引用时也不需要带括号
+>
+> 引用：`import { computed } from "vue"`
+>
+> 语法：`computed( ()=>{} )`		或  	`let xxx = computed( ()=>{} )`
+>
+> 注：必须在setup的return对象中加入；computed的回调函数必须有return
+>
+> 如：
+>
+> ```js
+> setup(){
+>    	let test = computed(()=>{
+>    	    return xxx;
+>    	})
+> 	return { 
+>         	test			
+>     	}			
+> }
+> ```
+>
+> 
+
+### watchEffect()
+
+与watch的区别：
+
+> 1、立即执行：当页面一打开时就可以侦听到指定数据（而watch这样需要使 immediate:true ）
+>
+> 2、watchEffect不需要传递侦听的内容，因为会自动侦听watchEffect函数内的数据
+>
+> 3、缺点：无法侦听到旧值
+
+> 引用：`import { watchEffect } from "vue"`
+>
+> 语法：`watchEffect( () => {} )`
+>
+> 停用watchEffect：直接调用该watchEffect
+>
+> ```js
+> let unwatchEffect = watchEffect( () => {
+>     xxxx;
+> })
+> 
+> unwatchEffect			//此时就可以停用该侦听器了
+> ```
+>
+> 
+
+### watch()
+
+是Vue2中的$watch 和 Vue3的watchEffect的结合
+
+> 引用：`import { watch } from "vue"`
+>
+> 语法：`watch( data, callBack , {} )`
+>
+> 参数：
+>
+> > data：需要监听的值，如果不写，则默认自动监听callBack内的数据
+> >
+> > callBack： `(newVal, oldVal) => {}`	可以有两个形参			没有data的情况下，必须有变化的数据（即：cb里面不能只有形参newVal和oldVal），不然无法watch侦听
+> >
+> > {}：和Vue2一样，含 deep 和 immediate 属性		（deep默认为true，immediate默认为false）
+>
+> 如：
+>
+> ```js
+> import { ref, watch } from "vue";
+> let num = ref(0);
+> 
+> watch(
+>     num,
+>     (newVal, oldVal) => {
+>         console.log("num:", newVal);
+>     },
+>     {
+>         deep: true
+>     }
+> );
+> 
+> setInterval(() => {
+>     num.value++;
+> }, 2000);
+> ```
+>
+> 停用watch：与停用watchEffect一样
+>
+> 注：
+>
+> > 1、立即执行
+> >
+> > 2、当watch括号内不传参时，默认自动监听函数内的数据
+> >
+> > 3、监听对象的属性：对于data参数，变为 `() => obj.name`（意思为：`let s = toRefs(obj);` data参数变为s.name ），此时就可以深度监听obj.name的值了
+> >
+> > 4、多个监听：将data变为数组，与之对应的cb而需要改为：`([newVal1, newVal2], [oldVal1, oldVal2] => { console.log(newVal1) })`
+
+## Vue3的生命周期
+
+在Vue3中，已经没有Vue实例创建的生命周期了（即beforeCreate和created），因为setup就是一个创建的入口函数（即setup是在beforeCreate之前）
+
+注：在Vue3中，可以使用Vue2的生命周期，但是其不能写在setup函数里面
+
+### onBeforeMount()
+
+> 定义：挂载之前，同Vue2的beforeMount
+>
+> 引用：`import { onBeforeMount } from "vue"`
+>
+> 语法：`onBeforeMount(() => {})`
+
+### onMounted()
+
+> 定义：挂载好了，同Vue2的Mounted
+>
+> 引用：`import { onMounted } from "vue"`
+>
+> 语法：`onMounted(() => {})`
+
+### onBeforeUpdate()
+
+> 定义：数据更新之前，同Vue2的beforeUpdate
+>
+> 引用：`import { onBeforeUpdate } from "vue"`
+>
+> 语法：`onBeforeUpdate(() => {})`
+
+### onUpdated()
+
+> 定义：数据更新好了，同Vue2的updated
+>
+> 引用：`import { onUpdated } from "vue"`
+>
+> 语法：`onUpdated(() => {})`
+
+### onBeforeUnmount()
+
+> 定义：Vue实例被销毁之前，常用于v-if，同Vue2的beforeDestroy
+>
+> 引用：`import { onBeforeUnmount } from "vue"`
+>
+> 语法：`onBeforeUnmount(() => {})`
+
+### onUnmounted()
+
+> 定义：Vue实例被销毁了，常用于v-if，同Vue2的destroyed
+>
+> 引用：`import { onUnmounted } from "vue"`
+>
+> 语法：`onUnmounted(() => {})`
+
+## 父子通讯
+
+### provide
+
+### inject
+
+### defineProps
+
+> 作用：获取组件传值（与Vue2的props类似）
+>
+> 语法：
+>
+> ```js
+> defineProps({ 
+> 	msg: String,
+> 	num: {
+> 	  type:Number,
+> 	  default: ''
+> 	}
+> })
+> ```
+
+### defineEmits
+
+> 作用：子组件向父组件事件传递（与Vue2的$emit类似）
+>
+> 使用：
+>
+> > 子组件
+> >
+> > ```vue
+> > <template>
+> >   <h1>{{ msg }}</h1>
+> >   <button @click="handleClick">点击我调用父组件方法</button>
+> > </template>
+> >  
+> > <script setup lang="ts">
+> > import { ref } from "vue";
+> > // props
+> > const props = defineProps({
+> >   msg: {
+> >     type: String,
+> >     default: "",
+> >   },
+> > });
+> > // emit
+> > const emit = defineEmits(["handleClick"]);
+> > // methods
+> > const handleClick = () => {
+> >   emit("handleClick", "父组件方法被调用了");
+> > };
+> > </script>
+> > ```
+> >
+> > 父组件
+> >
+> > ```vue
+> > <template>
+> >   <HelloWorld :msg="msg" @handleClick="handleClick"/>
+> > </template>
+> >  
+> > <script setup lang="ts">
+> > import { ref } from 'vue';
+> > import HelloWorld from './components/HelloWorld.vue'
+> > //data
+> > const msg = ref('欢迎使用vite！')
+> > //methods
+> > const handleClick = (params)=>{
+> >   console.log(params);
+> > }
+> > </script>
+> > ```
+
+### defineExpose
+
+> 作用：组件暴露自己的属性（原因：在Vue2中可以通过`this.$refs.xxx`或者`this.$parent`链获取到的组件的公开实例，但是使用`<script setup>` 的组件是默认关闭的）
+>
+> 如：
+>
+> ```js
+> const handleClick2 = () => {
+>   a.value = 3
+>   obj.name = '我叫改变'
+> };
+> 
+> 
+> defineExpose({
+>     a,
+>     obj,
+>     handleClick2
+> })
+> 
+> //亦或
+> const a = 1
+> const b = ref(2)
+> 
+> defineExpose({
+>   a,
+>   b
+> })
+> ```
+>
+> 
+
+------
 
 # 其他
 
