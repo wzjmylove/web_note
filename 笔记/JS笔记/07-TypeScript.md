@@ -60,6 +60,20 @@ bigint：bigint
 
 在ts中，引用类型更加细化，每个对象都有单独的语法
 
+### 类型别名
+
+当多个变量都是同一种数据类型时，如果每个都声明，太麻烦了，特别是联合类型
+
+> 语法：使用关键字type
+>
+> ```typescript
+> type XXX = (number | string)[];		//XXX是自定义的类型别名
+> let arr1: XXX = [1, 'a'];
+> let arr2: XXX = ['b', 2];
+> ```
+>
+> 在基本类型的声明中都适用，同样对对象也适用
+
 ### 数组
 
 > 语法：推荐使用第一行的写法
@@ -74,19 +88,12 @@ bigint：bigint
 > 以此类推，可以加布尔类型：`arr: (number | boolean | null)[]`
 > 如果少了括号：`arr: number | string[]`，则代表arr只能是 数字型（`arr=123`） 或 字符串型数组(`arr=['a']`)													
 
-### 类型别名
+#### 元组
 
-当多个变量都是同一种数据类型时，如果每个都声明，太麻烦了，特别是联合类型
-
-> 语法：使用关键字type
+> 定义：元组类型是特殊的数组，其**确切的知道包含了多少个元素，以及特定索引对应的类型**
 >
-> ```typescript
-> type XXX = (number | string)[];		//XXX是自定义的类型别名
-> let arr1: XXX = [1, 'a'];
-> let arr2: XXX = ['b', 2];
-> ```
->
-> 
+> 语法：`let arr: [number, number] = [123, 465]`
+> 意义：此时的数组有且只有两个数，且必须为number类型
 
 ### 函数
 
@@ -112,7 +119,7 @@ bigint：bigint
 >
 > ```ts
 > function fn(uname: string, name?: string): void {
->     console.log(uname + name);
+>         console.log(uname + name);
 > }
 > 
 > fn('w');
@@ -128,11 +135,11 @@ bigint：bigint
 >
 > ```ts
 > let obj: {name: string; age: number; hobby(myHobby: string): void} = {		//一行写完
->     name: 'wz',
->     age: 18,
->     hobby(myHobby) {
->         console.log(this.name + 'love' + myHobby);
->     }
+>    	name: 'wz',
+>    	age: 18,
+>    	hobby(myHobby) {
+>    	    console.log(this.name + 'love' + myHobby);
+>    	}
 > }
 > ```
 >
@@ -140,15 +147,15 @@ bigint：bigint
 >
 > ```ts
 > let obj: {				//多行写
->   name: string;
->   age: number;
->   hobby: (myHobby: string) => void;			//方法也可以用箭头函数写
+>   	name: string;
+>   	age: number;
+>   	hobby: (myHobby: string) => void;			//方法也可以用箭头函数写
 > } = {
->   name: "wz",
->   age: 18,
->   hobby(myHobby) {
->     console.log(this.name + "love" + myHobby);
->   },
+>   	name: "wz",
+>   	age: 18,
+>   	hobby(myHobby) {
+>    		console.log(this.name + "love" + myHobby);
+>   	},
 > };
 > 
 > console.log(obj);
@@ -162,4 +169,132 @@ bigint：bigint
 > > 2、一行里面的属性和方法用`; 或 ,`隔开，见例一；多行则可省略，见例二
 > >
 > > 3、方法里面有形参，也需要注意形参的类型声明
+
+#### 可选参数
+
+类似函数的可以选参数，都用 ？来表示
+
+如：
+
+```ts
+let obj:{
+    name?: string
+    age?: number
+}
+```
+
+#### 接口
+
+> 作用：当一个对象类型被多次使用时，可以使用接口（interface）来描述，达到复用的目的
+>
+> 语法：
+>
+> ```ts
+> interface XXX {
+>     age: number
+>     name: string
+> }
+> 
+> let obj: XXX = {
+>     age: 18,
+>     name: 'wz'
+> }
+> ```
+>
+> 
+
+#### 接口的继承
+
+接口和接口间，可能存在相同的属性和方法，可以将相同的抽离出来，通过继承来实现复用
+
+如：
+
+```ts
+interface A { x: number; y: number; }
+interface B { x: number; y: number; z: number }
+
+//继承后
+interface A { x: number; y: number; }
+interface B extends A { z: number }		//如果B没有自己的属性，则是：interface B extends A {}
+
+//使用
+let obj: B = {x: 1, y: 2, z: 3}
+```
+
+## 类型推论
+
+定义：在TS中，某些没有明确指出类型的地方，TS的类型推论机制就会帮助提供类型，因此某些地方可以不写类型声明
+
+常见的类型推论场景：1、声明变量并初始化时		2、决定函数返回值时（能够推导处return的类型）
+
+如果声明变量，但没初始化赋值，也没声明类型，则该变量可以随时变为任意类型
+
+## 类型断言
+
+虽然TS能够提示变量类型，但有可能这个类型太宽泛，导致无法知道具体的属性和方法
+
+如：
+
+> dom类型	
+>
+> `let app = document.querySelector("#app")`
+>
+> 此时app的类型只是一个Element，而无法知道其是div或a标签等
+>
+> 如果是a标签，那么使用 app.href 时，ts会提示错误，但实际却能正常编译
+
+解决：使用类型断言，指定更加具体的类型
+
+> 语法：
+>
+> > 1、as关键字		
+> >
+> > 如：`let app = document.querySelector("#app") as HTMLAnchorElement`
+> >
+> > 2、<> 语法
+> >
+> > 如：`let app = <HTMLAnchorElement>document.querySelector("#app")`
+
+## 字面量类型
+
+> 定义：某个特定的值可以作为TS中的类型
+>
+> 如：
+>
+> ```ts
+> let str1 = "Hello TS";		//str1的类型为string
+> const str2 = "Hello TS";	//str2的类型为 "Hello TS"	因为const定义的是常量，值是不会发生变化的，所以字符串作为了str2的类型，此处								  的"Hello TS"就是字面量类型
+> ```
+>
+> 因此，可以直接给变量赋字面量类型：
+>
+> ```ts
+> let age: 18 = 19;	//此时就会报错
+> ```
+>
+> 使用场景：明确知道变量的可选值（比如 'up' | 'down'）
+
+### 枚举
+
+> 作用：定义一组命名常量（字面量）
+>
+> 语法：`enum XXX { 1, xx }`
+>
+> 使用：`let str: XXX`		此时str的值只能为 1 或  xx
+> 访问枚举成员：`XXX.1`	此时就可以拿到 1 了
+> 即：
+>
+> ```ts
+> str = XXX.1;		//此时打印str，结果为0		index=0
+> str = XXX.xx;		//此时打印str，结果为1		index=1
+> 
+> ```
+>
+> 注：
+>
+> > 1、不能直接str = xx
+> >
+> > 2、不能直接使用 XXX.xx ，更不能 XXX.xx = 123		（因为XXX是只读）
+> > 但是可以在枚举初始化的时候赋值：`enum XXX { 1='1', xx=2 }`
+> > 如果赋值是数字，当第一个赋值，后续的不赋值，则后续的默认自增长
 

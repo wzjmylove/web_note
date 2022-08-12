@@ -262,19 +262,20 @@ vm.$mount('#app');
 >
 > 作用：针对表单元素和组件，实现**双向绑定数据**
 >
-> 针对表单元素的用法：
+> 只能绑定在表单元素上
 >
 > ```html
 > <div class="app">
->     <input v-model="msg"></input>
->     <p>{{msg}}</p>
+>      <input v-model="msg"></input>
+>      <p>{{msg}}</p>
 > </div>
+> 
 > <script>
->     let vm = new Vue({
->         data: {
->             msg: 'hello Vue'
->         }
->     }).$mount('.app')
+>  let vm = new Vue({
+>      data: {
+>          msg: 'hello Vue'
+>      }
+>  }).$mount('.app')
 > </script>
 > ```
 >
@@ -282,18 +283,18 @@ vm.$mount('#app');
 >
 > ```html
 > <div class="app">
->    	<input type="radio" v-model="sex" value="男">男
->    	<input type="radio" v-model="sex" value="女">女
->    	<p>{{sex}}</p>
+> 	<input type="radio" v-model="sex" value="男">男
+> 	<input type="radio" v-model="sex" value="女">女
+> 	<p>{{sex}}</p>
 > </div>
-> <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+> 
 > <script>
->    	let vm = new Vue({
->            data: {
->            msg: 'hello Vue',
->            sex: '男'			//单选按钮会默认选择value和sex匹配的按钮（如果radio不给value，则点击按钮后，插值表达式 sex 会显示null）
->    		}
->    	}).$mount('.app')
+> 	let vm = new Vue({
+>         data: {
+>         msg: 'hello Vue',
+>         sex: '男'			//单选按钮会默认选择value和sex匹配的按钮（如果radio不给value，则点击按钮后，插值表达式 sex 会显示null）
+> 		}
+> 	}).$mount('.app')
 > </script>
 > ```
 
@@ -405,11 +406,11 @@ v-bind和v-on都是事件指令
 
 > 语法：`v-bind:属性名= "常量 或 变量名"`		（v-bind可以省略）
 >
+> 如：`<img :src="./xxx.png">`
+>
 > 作用：动态地绑定一个或多个属性，或者一个组件prop到表达式
 >
 > 注：v-bind必须跟JS表达式
-
-错误写法：`v-bind:src="{{xxx}}"`		
 
 #### 对类名的控制 :class
 
@@ -463,7 +464,7 @@ v-bind和v-on都是事件指令
     <p>{{num}}</p>
     <button v-on:click="num++">自增</button>
     <button @click="Print()">打印</button>
-    //没有传参的情况下，可以不写冒号那种
+    //没有传参的情况下，可以不写括号那种
     <button @click="Print">log</button>
 </div>
 <script>
@@ -513,7 +514,7 @@ v-bind和v-on都是事件指令
 
 #### 绑定多个事件
 
-不能简写了，必须用v-on
+不能简写，必须用v-on
 
 ```html
 <div id="app">
@@ -1032,7 +1033,7 @@ Vue本身的$watch方法就是取消侦听器的方法，因此可以直接在$w
 
 ## 创建 extend
 
-创建构造器，又称为拓展
+创建构造器，又称为拓展（不常用）
 
 > 定义：Vue构造器的拓展，调用Vue.extend创建的是一个组件构造器
 >
@@ -1088,7 +1089,7 @@ new myextend().$mount('#app');		//将myextend构造器挂载到id为app的标签
 >
 > 参数：
 >
-> > 自定义标签：自己可以定义的标签（注意不能有大写）
+> > 自定义标签：自己可以定义的标签名字（注意不能有大写）
 > >
 > > myextend：组件构造器，可以直接用一个obj来代替extend创建这一过程（实际开发直接使用另外的vue文件）
 
@@ -1175,17 +1176,17 @@ new Vue({
 <script>
     let child = {
         template: `
-        <div>
-            <h3>I am child</h3>
-        </div>
-        `
+        		  <div>
+        		      <h3>I am child</h3>
+        		  </div>
+        		  `
     }
     let father = {
         template: `<div style="border 2px solid red">
-            <h3>I am father</h3>
-            <my-child></my-child>					//报错，显示没有注册my-child子组件
-        </div>
-        `
+           			  <h3>I am father</h3>
+           			  <my-child></my-child>					//报错，显示没有注册my-child子组件
+       			  </div>
+        		 `
     }
     new Vue({
         el: '#app',
@@ -1208,18 +1209,18 @@ new Vue({
 <script>
     let child = {
         template: `
-        <div>
-            <h3>I am child</h3>
-        </div>
-        `
+        		 <div>
+        		     <h3>I am child</h3>
+        		 </div>
+        		 `
     }
 
     let father = {
         template: `<div style="border: 2px solid red">
-            <h3>I am father</h3>
-            <my-child></my-child>
-        </div>
-        `,
+            		  <h3>I am father</h3>
+            		  <my-child></my-child>
+        		  </div>
+        		  `,
         components: {
             'my-child': child
         }
@@ -1257,11 +1258,11 @@ new Vue({
 
 <img src="..\image\Vue_组件_通讯_父子传值.png" alt="image-20220719185517483" style="zoom:50%;" />
 
-#### 父传子
+实际开发中，对于多个组件共用一组数据时，常用vuex来传值；但是只有一组组件，则用父子通讯
+
+#### 父传子props
 
 父传子：需要将父组件的数据绑定到子组件的标签中；子组件在创建的时候也需添加一个props来接受数据（props只可读，不可写）
-
-实际开发中，props使用是为了测试，开发中常用vuex来传值
 
 props可以是一个数组，也可以是一个对象（对象的属性值，可以做属性限制，也能传递多个值，如下所示）
 
@@ -1293,6 +1294,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
             }
         }
     }
+    //父组件实例
     let vm = new Vue({
         el: '#app',
         data: {
@@ -1309,7 +1311,6 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 结果：![Vue_组件_父传子_props对象](..\image\Vue_组件_父传子_props对象.png)
 
 报错原因：props属性值限制了数据类型（数据类型不要用引号包裹）
-
 因此，可以一个属性限制多个数据类型：`movies: [String, Array]`
 
 给子组件传值时，props中的属性也是一个对象，如movies、myMsg都是对象，其属性有：
@@ -1318,7 +1319,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 >
 > default：默认值，父组件不传值时显示默认值
 >
-> required：数据是否传值，true为必传（不穿就报错），false（默认值）为可传可不传
+> required：数据是否传值，true为必传（不传就报错），false（默认值）为可传可不传
 >
 > 注：default 和 required 不能共用
 
@@ -1391,7 +1392,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 
 ##### propsData
 
-通过new创建子组件的时候给子组件传值
+通过new创建子组件的时候给子组件传值（只传第一次）
 
 如：
 
@@ -1470,7 +1471,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 
 ```html
 <div id="app">
-    <!-- 注意自定义事件 update不需要加括号，加了括号的一个个形参必须是$event -->
+    <!-- 注意自定义事件 update不需要加括号，加了括号的一个形参必须是$event -->
     <my-son @get-msg="update($event)"></my-son>				//接受子组件通过$emit传值事件，并触发父组件update方法，以调用传值内容
     <h4>父组件：{{father_msg}}</h4>
 </div>
@@ -1496,6 +1497,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
             }
         }
     }
+    
     let vm = new Vue({
         el: '#app',
         data: {
@@ -1515,7 +1517,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 </script>
 ```
 
-##### 升级版
+##### 升级版 .sync
 
 通过`.sync`修饰符，省去了父组件v-on绑定方法这一步骤
 
@@ -1840,6 +1842,38 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 `export default {}`：里面可以包含vue实例的所有属性，如props、name等
 
 3、引入：在App.vue文件下的`<script>`标签里import，然后`export default { components:{xxx} }`，即可引入xxx子组件。
+
+## 样式
+
+`<style></style>`标签
+
+其属性可以有
+
+> lang：定义后缀，如：`lang="css"   lang="less"  lang="scss"`
+>
+> scope：给该vue组件下的样式一个单独的作用域（可以在浏览器元素中看到 `data-v-xxxxxx`，这个就是css唯一标识符的意思）
+> 因为组件样式会共享
+
+### 深度选择器
+
+在实际开发中，因为用到了UI组件，UI组件的样式是固定的，但是在自己定义的组件中样式又有scope，又想在此处改UI组件的样式，此时就需要用到深度选择器
+
+> 语法：`>>>` 	或	`::v-deep`	或	`:deep(类名)`
+> 后两者最常用
+>
+> 如：
+>
+> ```css
+> ::v-deep .btn {
+>     background: red;
+> }
+> 
+> :deep(.btn) {
+>     color: pink;
+> }
+> ```
+>
+> 
 
 ------
 
@@ -2600,6 +2634,142 @@ actions: {
 
 ------
 
+# Pinia
+
+类似于Vuex，是专为vue框架开发的（可以理解为Vuex 5）
+
+Pinia和Vuex的区别：
+
+> 1、没有mutations：Pinia的actions支持同步和异步
+>
+> 2、无需创建各个模块：在Vuex中，如果数据过多，是需要分模块来管理；而Pinia中每个store都是独立的，互不影响
+
+## 安装
+
+npm install pinia
+
+## 引用
+
+在main.js中：
+
+```ts
+import { createPinia } from 'pinia'
+const pinia = createPinia();
+const App = createApp(App);
+App.use(pinia)
+```
+
+## store
+
+### 创建
+
+> store作用：存储数据，其他人可以随便访问和修改里面的数据
+>
+> 语法：在store文件夹下
+>
+> ```ts
+> import { defineStore } from "pinia"
+> 
+> export const useXxxStore = defineStore(id, options)		//规范：use开头，Xxx自定义名字，Store结尾
+> ```
+>
+> 参数：
+>
+> > id：自定义store名字（注意其唯一性）
+> >
+> > options：一个对象，是store的配置项，用于配置数据、修改数据的方法等
+
+### 引用
+
+```ts
+import { useXxxStore } from './store/xx.ts'
+const xxxStore = useXxxStore();
+```
+
+### options下的属性
+
+#### state
+
+> 定义：defineStore中第二个形参{}下的一个属性
+>
+> 作用：存储数据
+>
+> 语法：`state: ()=> { return {} }`
+
+##### 使用
+
+直接打点调用：`xxxStore.xx`
+
+因为state中存储的数据是直接挂载在xxxStore对象下的，因此也可以使用解构赋值来解构xxxStore对象
+注：**不过需要注意使用storeToRefs()来将其变为响应式：`const {a, b, c} = storeToRefs(xxxStore)`**		用toRefs也可以（ 见Vue3 —> 组合API —> toRefs() ）
+
+##### 修改
+
+不需要像Vuex一样利用commit去修改，直接赋值即可：`xxxStore.xx = newVal`
+
+##### 重置$reset()
+
+> 作用：清楚state数据被变化的部分，从而恢复到state原有赋值的情况
+>
+> 语法：`xxxStore.$reset()`
+
+##### 批量修改$patch
+
+> 作用：一次性修改多个state中的数据，避免了多次打点调用
+>
+> 语法：`xxxStore.$patch({})`
+>
+> 如：
+>
+> ```ts
+> storeToRefs.$patch({
+>     name: 'wz',
+>     age: 18
+> })
+> 
+> //此时state中的name和age就会改变
+> ```
+
+##### 替换$state
+
+> 语法：`xxxStore.$state({})`
+
+#### getters
+
+同Vuex的getters，算pinia的一个计算属性
+
+> 语法：`getters: { 方法 }`
+>
+> 如：
+>
+> ```ts
+> defineStore('test', {
+> 	state: () => {
+>         name: 'wz',
+>         age: 18
+>     },
+>     getters: {
+>         addAge(state) {					//形参第一个必须是state
+>             return state.age++;		 	 //必须有return
+>         },
+>         addName() {						//用this，不能用箭头函数
+>             return this.name + '!';		 //同样能拿到state的name，此时的this指向store实例xxxStore
+>         },
+>         add(state) {
+>             return num => state.age + num;		//返回了一个函数，实现了向getters中的add函数传实参
+>         }
+>     }
+> })
+> 
+> //使用getters
+> {{xxxStore.addAge}}
+> {{xxxStore.add(1100)}}		//向getters中的add函数传实参1100
+> ```
+>
+> 
+
+------
+
 # Vue3
 
 与Vue2对比的特点：Vue3中设计了一套强大的composition组合APi代替了Vue2中的option API ,复用性更强了，对TypeScript有更好的支持
@@ -2732,7 +2902,7 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 >     }			
 > }
 > 
-> 外界就可以正常使用person.name，同时person.name也是响应式数据，可以实现双向绑定
+> //外界就可以正常使用person.name，同时person.name也是响应式数据，可以实现双向绑定
 > ```
 >
 
@@ -2900,7 +3070,7 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 
 > 作用：获取组件传值（与Vue2的props类似）
 >
-> 语法：
+> 语法： 可以见defineEmits的例子
 >
 > ```js
 > defineProps({ 
@@ -2914,7 +3084,7 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 
 ### defineEmits
 
-> 作用：子组件向父组件事件传递（与Vue2的$emit类似）
+> 作用：子组件向父组传递件事件（与Vue2的$emit类似）
 >
 > 使用：
 >
@@ -2922,25 +3092,25 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 > >
 > > ```vue
 > > <template>
-> >   <h1>{{ msg }}</h1>
-> >   <button @click="handleClick">点击我调用父组件方法</button>
+> >   	<h1>{{ msg }}</h1>
+> >   	<button @click="deliver">点击我调用父组件方法</button>
 > > </template>
 > >  
 > > <script setup lang="ts">
-> > import { ref } from "vue";
-> > // props
-> > const props = defineProps({
-> >   msg: {
-> >     type: String,
-> >     default: "",
-> >   },
-> > });
-> > // emit
-> > const emit = defineEmits(["handleClick"]);
-> > // methods
-> > const handleClick = () => {
-> >   emit("handleClick", "父组件方法被调用了");
-> > };
+> > 	import { ref } from "vue";
+> > 	// props
+> > 	const props = defineProps({		//父传子了msg
+> >   		msg: {
+> >    			type: String,
+> >    			default: "",
+> >   		},
+> > 	});
+> > 	// emit
+> > 	const emit = defineEmits(["handleClick"]);
+> > 	// methods
+> > 	const deliver = () => {
+> >   		emit("handleClick", "父组件方法被调用了");
+> > 	};
 > > </script>
 > > ```
 > >
@@ -2948,38 +3118,38 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 > >
 > > ```vue
 > > <template>
-> >   <HelloWorld :msg="msg" @handleClick="handleClick"/>
+> >   	<HelloWorld :msg="msg" @handleClick="do"/>
 > > </template>
 > >  
 > > <script setup lang="ts">
-> > import { ref } from 'vue';
-> > import HelloWorld from './components/HelloWorld.vue'
-> > //data
-> > const msg = ref('欢迎使用vite！')
-> > //methods
-> > const handleClick = (params)=>{
-> >   console.log(params);
-> > }
+> > 	import { ref } from 'vue';
+> > 	import HelloWorld from './components/HelloWorld.vue'
+> > 	//data
+> > 	const msg = ref('欢迎使用vite！')
+> > 	//methods
+> > 	const do = (params)=>{
+> >   		console.log(params);
+> > 	}
 > > </script>
 > > ```
 
 ### defineExpose
 
-> 作用：组件暴露自己的属性（原因：在Vue2中可以通过`this.$refs.xxx`或者`this.$parent`链获取到的组件的公开实例，但是使用`<script setup>` 的组件是默认关闭的）
+> 作用：组件暴露自己的属性（原因：在Vue2中可以通过`this.$refs.xxx`或者`this.$parent`链获取到的组件的公开实例，但是使用`<script setup>` 的组件是默认关闭的）；使父组件能够使用到子组件的方法
 >
 > 如：
 >
 > ```js
 > const handleClick2 = () => {
->   a.value = 3
->   obj.name = '我叫改变'
+>   	a.value = 3
+>   	obj.name = '我叫改变'
 > };
 > 
 > 
 > defineExpose({
->     a,
->     obj,
->     handleClick2
+>         a,
+>         obj,
+>         handleClick2
 > })
 > 
 > //亦或
@@ -2987,8 +3157,8 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 > const b = ref(2)
 > 
 > defineExpose({
->   a,
->   b
+>   	a,
+>   	b
 > })
 > ```
 >
