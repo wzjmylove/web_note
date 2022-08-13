@@ -1663,9 +1663,9 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 ```html
 <div id="app">
-    <my-son></my-son>												//结果：先显示 “我是子组件” ， 再显示 “我是插槽”
-    <my-son>我是父组件</my-son>										 //结果：先显示 “我是子组件” ， 再显示 “我是父组件”
-    <my-son> <div>我是div</div> <span>我是span</span> </my-son>			 //结果：先显示 “我是子组件” ， 再显示 “我是div” “我是span”
+    <my-son></my-son>											//结果：先显示 “我是子组件” ， 再显示 “我是插槽”
+    <my-son>我是父组件</my-son>									//结果：先显示 “我是子组件” ， 再显示 “我是父组件”
+    <my-son> <div>我是div</div> <span>我是span</span> </my-son>			 <!--结果：先显示 “我是子组件” ， 再显示 “我是div” “我是span”-->
 </div>
 
 <template id="my-son">
@@ -1754,9 +1754,9 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 #### v-slot
 
-> 作用：当组件需要在多个父组件多个界面展示的时候，将内容放在子组件插槽中，父组件只需要告诉子组件使用什么方式展示界面。
+> 作用：当数据需要在多个父组件多个界面展示的时候，将内容放在子组件插槽中，父组件只需要告诉子组件使用什么方式展示界面。
 >
-> 注：`v-slot只能用在 template模板` 或 components 里面
+> 注：v-slot 只能用在 template 模板或 components 里面
 
 ```html
 <div id="app">
@@ -1852,7 +1852,7 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 > lang：定义后缀，如：`lang="css"   lang="less"  lang="scss"`
 >
 > scope：给该vue组件下的样式一个单独的作用域（可以在浏览器元素中看到 `data-v-xxxxxx`，这个就是css唯一标识符的意思）
-> 因为组件样式会共享
+> 没有scope，组件样式会共享
 
 ### 深度选择器
 
@@ -1897,8 +1897,6 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 > ```
 >
 > 
-
-
 
 ## 基本使用
 
@@ -2766,7 +2764,20 @@ const xxxStore = useXxxStore();
 > {{xxxStore.add(1100)}}		//向getters中的add函数传实参1100
 > ```
 >
-> 
+
+#### actions
+
+与Vue2的methods类似，用于放置一些逻辑处理的代码，该方法可以是同步也可以是异步
+
+actions也是一个对象
+
+> 使用场景：发送请求等
+>
+> 语法：`actions: { fn() {} }`
+>
+> 注：fn不带state形参，因此修改state的内容需要用到this（this指向store实例）
+>
+> 使用：直接 xxxStore.fn 即可调用
 
 ------
 
@@ -3062,9 +3073,32 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 
 ## 父子通讯
 
-### provide
+### provide & inject
 
-### inject
+父组件通过provide将需要传的值传出去；子组件通过inject来获取并使用值
+
+provide可以传给子，也可以传给孙等
+
+#### provide
+
+> 引入：`import { provide } from "vue"`
+>
+> 语法：`provide(key, value)`
+>
+> 参数：
+>
+> > key：传递数据的名字，自定义的，string类型
+> >
+> > value：需要传递的值
+
+#### inject
+
+> 引入：`import { inject } from "vue"`
+>
+> 语法：`inject(key)`
+>
+> 使用：直接 `let val = inject(key)`
+> 
 
 ### defineProps
 
