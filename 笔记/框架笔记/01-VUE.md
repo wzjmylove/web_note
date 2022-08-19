@@ -3100,21 +3100,83 @@ provide可以传给子，也可以传给孙等
 > 使用：直接 `let val = inject(key)`
 > 
 
-### defineProps
+### props父传子
+
+#### props
 
 > 作用：获取组件传值（与Vue2的props类似）
 >
-> 语法： 可以见defineEmits的例子
+> 语法： 
 >
-> ```js
-> defineProps({ 
-> 	msg: String,
-> 	num: {
-> 	  type:Number,
-> 	  default: ''
-> 	}
+> ```ts
+> const props = defineProps({
+>   child: {
+>     type:String, // 参数类型
+>     default: 1, //默认值
+>     required: true, //是否必传
+>     validator: value => {
+>       return value >= 0 // 除了验证是否符合type的类型，此处再判断该值结果是否符合验证
+>     }
+>   },
+>   sda: String, //undefined
+>   strData: String,
+>   arrFor: Array
 > })
+> 
+> //子组件声明了的 props ，若父组件未传，则该值为 undefined 
 > ```
+>
+> 
+
+#### defineProps 
+
+单独使用该api，只能设置是否必传和参数类型
+
+> 语法：`defineProps()`			括号内的值就是从父组件接收到的值
+>
+> 如：
+>
+> ```ts
+> const props = defineProps<{
+>   	either: '必传且限定'|'其中一个'|'值', // 利用TS：限定父组件传 either 的值
+>   	child?: string|number,
+>   	strData?: string,
+>   	arrFor: any[]
+> }>();
+> console.log(props);
+> 
+> //相较于props，该写法只能设置参数类型，但没有默认值
+> ```
+>
+> 
+
+#### withDefaults
+
+> 作用：给defineProps设置默认值（因此必须搭配defineProps一起使用）
+>
+> 语法：`withDefaults(defineProps<Props>(), {})`		第二个参数就是默认值设置
+>
+> 如：
+>
+> ```ts
+> interface Props {
+> 	either: '必传且限定'|'其中一个'|'值', // 利用TS：限定父组件传 either 的值
+>   	child: string|number,
+>   	sda?: string, // 未设置默认值，为 undefined
+>   	strData: string,
+>   	msg?: string
+>   	labels?: string[],
+>   	obj?:{a:number}
+>   }
+> const props = withDefaults(defineProps<Props>(), {
+> 	msg: 'hello',					//此时就能接受来自父组件传的msg等值了，同时msg、labels、obj也有默认值
+>   	labels: () => ['one', 'two'],
+>   	obj: () => { return {a:2} }
+>   })
+> 
+> ```
+> 
+>注：**默认值为引用类型的，需要包装一个函数 return 出去**
 
 ### defineEmits
 
