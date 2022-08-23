@@ -1162,6 +1162,31 @@ new Vue({
 })
 ```
 
+### `<component>`
+
+component做元组件
+
+> 作用：渲染组件，减少冗余代码（比如一个div里面，根据不同情况渲染不同组件，就需要把所有组件写上，用v-if-else来判断，代码冗余）
+>
+> 语法：`<component :is=""></component>`
+>
+> is属性：选择渲染的组件
+>
+> 如：
+>
+> ```ts
+> <script setup>
+> import Foo from './Foo.vue'
+> import Bar from './Bar.vue'
+> </script>
+> 
+> <template>
+>   <component :is="Math.random() > 0.5 ? Foo : Bar" />
+> </template>
+> ```
+>
+> 
+
 ## 组件嵌套
 
 直接创建两个构造器/选项对象，然后在父的template中添加子，会报错（显示没有注册child子组件）
@@ -1969,10 +1994,75 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 > > ```
 > >
 > > 注：在router-view标签之外的标签，不会因为页面跳转而变化
-> > 即：router-view切换的是挂载的组件，其余内容不发生改变
+> > 即：router-view切换的是挂载的组件，其余内容不发生改变（常用在layouts不动的页面中）
 > > 因此，此处的h1标签会一直存在
 > >
 > > router-view是可以被router-link代替
+
+###  路由记录meta
+
+meta是routes数组中的对象的一个属性，用于记录自定义信息（如访问权限等）
+
+meta可以在路由地址和导航守卫上被访问到
+
+> 语法：`meta: { xxx: xx }`
+>
+> 如：
+>
+> 在router.js中
+>
+> ```ts
+> const routes = [{
+>         path: '/home', 
+>         component: Home,
+>     	meta: {
+>             permission: 1,
+>         }
+>   },
+>   {
+>         path: '/about',
+>         component: About
+>   }
+> ]
+> ```
+>
+> 使用：如路由守卫
+>
+> ```ts
+> router.beforeEach((to, from) => {
+> 	to.meta.permission			//此时便可以访问meta里面的属性
+> })
+> ```
+>
+> 注：一个路由匹配成功后，它可能匹配多个路由记录（如匹配子路由，此时会成功匹配父路由和子路由的meta）
+
+### useRoute()
+
+> 作用：返回当前路由地址
+>
+> 语法：
+>
+> ```ts
+> import { useRoute } from "vue-router"
+> 
+> useRoute();		//当前路由地址
+> ```
+>
+> 注：必须在setup()中使用
+
+### useRouter()
+
+> 作用：返回router实例
+>
+> 语法：
+>
+> ```ts
+> import { useRouter } from "vue-router"
+> 
+> useRouter();		//当前路由实例
+> ```
+>
+> 注：必须在setup()中使用
 
 ### 声明式导航 router-link
 
@@ -2151,22 +2241,24 @@ params和name搭配使用，query和path搭配使用
 
 #### params传参
 
-在routes中path里面追加
+语法：在path最后加 `/:xx`	（如 `/:id`）
 
-> 语法：在path最后加 `/:xx`	（如 `/:id`）
->
+##### 方法一
+
+to后面跟string
+
 > ```js
-> const routes = [{
+>const routes = [{
 > 	path: '/:xx',
 > }]
 > ```
->
+> 
 > 参数：xx：自定义参数，在网页的path路径下输入任何信息，都能使 xx=“输入的信息”
 >
 > 如：（**例子中含params传参**）
 >
 > > App.vue
-> >
+>>
 > > ```vue
 > > <template>
 > > 	<div id="app">
@@ -2181,14 +2273,14 @@ params和name搭配使用，query和path搭配使用
 > > 
 > > <script>
 > > export default {
-> >     name: "App",
-> >     components: {},
-> >     data() {
-> >         return {
-> >             user1: "王泽",
-> >             user2: "max"
-> >         };
-> >     }
+> >         name: "App",
+> >         components: {},
+> >         data() {
+> >             return {
+> >                 user1: "王泽",
+> >                 user2: "max"
+> >             };
+> >         }
 > > };
 > > </script>
 > > ```
@@ -2227,9 +2319,11 @@ params和name搭配使用，query和path搭配使用
 > > 结果：
 > >
 > > ![Vue_动态路由_例子](..\image\Vue_动态路由_例子.png)
->
+> 
 
-#### params传参
+##### 方法二
+
+to后面跟对象
 
 > to的另外使用方法：跟对象 `<router-link :to="{}">`	（以下name均指data中的属性）
 >
@@ -2237,8 +2331,8 @@ params和name搭配使用，query和path搭配使用
 > > id：是指routes中 `/:id`
 > >
 > > 注：不写path，默认path就是 / 根路径
-> 
->此外，push和replace也通用，括号内的参数可以是对象，方法同router-link中to跟对象一样
+>
+> 此外，push和replace也通用，括号内的参数可以是对象，方法同router-link中to跟对象一样
 > 如：` this.$router.push({name:'XX', params: {id: 'xxx'}})`
 
 #### query传参
@@ -2380,6 +2474,8 @@ npm i axios
 
 ### 发起请求
 
+默认情况下，axios将JavaScript对象序列化为JSON。 要以`application/x-www-form-urlencoded`格式发送数据
+
 #### 普通请求
 
 ##### get请求
@@ -2414,11 +2510,122 @@ axios.get('http://xxx?userId=3')			//此时就可以获得userId为3的数据
 
 方法二：指定params参数
 
-```js
+```ts
 axios.get('http://xxx', {params: {userId: 3}})						
 	.then((res) => {})
 	.catch((err) => {})
 ```
+
+## axios的二次封装 axios.create()
+
+> 作用：针对请求方法一样，地址不一样的axios，减少重复代码
+>
+> 语法：
+>
+> ```ts
+> const instance = axios.create({
+>    baseURL:"http://localhost:3000"
+> })
+> 
+> // 使用instance发请求，默认是get请求
+> instance({
+>     url:"/posts"
+> })
+> 
+> // 或
+> instance.get("/posts")
+> //此时访问的地址就是 http://localhost:3000/posts
+> ```
+>
+> 同时请求多个端口：
+>
+> ```ts
+> const instance = axios.create({
+>     baseURL:"http://localhost:3000"
+> })
+> 
+> const instance2 = axios.create({
+>     baseURL:"http://localhost:4000"
+> })
+> 
+> // 同时请求 端口号 3000 4000
+> 
+> // 使用instance发请求
+> instance({
+>     url:"/posts"
+> })
+> 
+> // 使用instance2发请求
+> instance2({
+>     url:"/posts"
+> })
+> ```
+>
+> 
+
+## 拦截器
+
+作用：在请求或响应被 `then` 或 `catch` 处理前拦截它们
+
+### 请求拦截器
+
+> 语法：
+>
+> ```ts
+> // 添加请求拦截器
+> axios.interceptors.request.use(function (config) {	//config：请求配置
+> 	// 在发送请求之前做些什么
+> 	return config;
+> }, function (error) {
+> 	// 对请求错误做些什么
+> 	return Promise.reject(error);
+> });
+> ```
+>
+> 使用场景：发送网络请求时，在界面显示一个请求的同步动画、某些请求（比如登录（token））必须携带一些特殊的信息
+
+### 响应拦截器
+
+> 语法：
+>
+> ```ts
+> axios.interceptors.response.use(function (response) {	//response：响应结果
+> 	// 对响应数据做点什么
+> 	return response;
+> }, function (error) {
+> 	// 对响应错误做点什么
+> 	return Promise.reject(error);
+> });
+> ```
+>
+> 
+
+例子：
+
+```ts
+axios.interceptors.request.use(function (config) {
+    console.log("请求拦截器")
+	return config;
+});
+
+axios.interceptors.response.use(function (response) {
+    console.log("响应拦截器")
+	return response;
+});
+
+console.log("开始请求")
+axios.get("http://localhost:3000/posts")
+.then(res=>{
+    console.log("res:",res)
+    console.log("请求结束")
+})
+```
+
+结果：
+
+![Vue_axios_拦截器_results](..\image\Vue_axios_拦截器_results.png)
+
+注：多个拦截器拦截一个请求时，请求拦截器 **后添加先执行**
 
 ------
 
@@ -3016,6 +3223,24 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 > > 3、监听对象的属性：对于data参数，变为 `() => obj.name`（意思为：`let s = toRefs(obj);` data参数变为s.name ），此时就可以深度监听obj.name的值了
 > >
 > > 4、多个监听：将data变为数组，与之对应的cb而需要改为：`([newVal1, newVal2], [oldVal1, oldVal2] => { console.log(newVal1) })`
+
+### h()
+
+类似于createElement（见 `../JS笔记/02-DOM.md` 中 `节点操作-> 增删改查 -> 创建doucument.creatElement` ）
+
+> 作用：创建虚拟 DOM 节点
+>
+> 引用：`import { h } from "vue"`
+>
+> 语法：`h(type, props?, children?)`
+>
+> 参数：
+>
+> > type：可以是字符串（如div，表示创建div），也可以是vue组件
+> >
+> > props：对象类型，表示需要传递给虚拟子节点的各种属性（如id、class）、文本等
+> >
+> > children：该dom的子节点
 
 ## Vue3的生命周期
 

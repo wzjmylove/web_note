@@ -191,13 +191,13 @@ let obj:{
 >
 > ```ts
 > interface XXX {
->     age: number
->     name: string
+>         age: number
+>         name: string
 > }
 > 
 > let obj: XXX = {
->     age: 18,
->     name: 'wz'
+>         age: 18,
+>         name: 'wz'
 > }
 > ```
 >
@@ -298,3 +298,22 @@ let obj: B = {x: 1, y: 2, z: 3}
 > > 但是可以在枚举初始化的时候赋值：`enum XXX { 1='1', xx=2 }`
 > > 如果赋值是数字，当第一个赋值，后续的不赋值，则后续的默认自增长
 
+## typeof 运算符
+
+如果不是ts中的类型声明语法，则会将 typeof 识别为 js 中的 typeof
+
+> 作用：在类型上下文中引用变量或属性的类型
+>
+> 使用场景：根据已有变量的值，获取该值的类型，以达到简化书写的目的
+>
+> 如：
+>
+> ```ts
+> let obj = { x: 2, y: "aa" };
+> 
+> function fn(point: typeof obj) {}
+> // function fn(point:{x:number,y:string}) {}
+> fn(obj);
+> ```
+>
+> 
