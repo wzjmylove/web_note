@@ -2015,7 +2015,7 @@ meta可以在路由地址和导航守卫上被访问到
 > const routes = [{
 >         path: '/home', 
 >         component: Home,
->     	meta: {
+>     	 meta: {
 >             permission: 1,
 >         }
 >   },
@@ -2072,7 +2072,30 @@ meta可以在路由地址和导航守卫上被访问到
 >
 > 语法：`<router-link to="/xx"> </router-link>`		作用在App.vue文件下
 >
-> 参数：`to="/xx"`：表示跳转到xx组件页面上
+> 参数：`to="/xx"`：表示跳转到地址为xx的页面上
+>
+> 如：
+>
+> ```vue
+> <!-- 字符串 -->
+> <router-link to="/home">Home</router-link>
+> 
+> <!-- 使用 v-bind 的 JS 表达式 -->
+> <router-link :to="'/home'">Home</router-link>
+> 
+> <!-- 同上 -->
+> <router-link :to="{ path: '/home' }">Home</router-link>
+> 
+> <!-- 命名的路由，跳转到name为user的路由上，并传值 -->
+> <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
+> 
+> <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
+> <router-link :to="{ path: '/register', query: { plan: 'private' }}">Register</router-link>
+> 
+> 
+> <!-- 渲染结果 -->
+> <a href="/home">Home</a>
+> ```
 >
 > 注：
 >
@@ -2343,8 +2366,6 @@ to后面跟对象
 >
 > 此外，push和replace也通用，括号内的参数可以是对象，方法同router-link中to跟对象一样
 > 如：` this.$router.push({name:'XX', params: {id: 'xxx'}})`
-
-
 
 ## 嵌套路由/子路由
 
