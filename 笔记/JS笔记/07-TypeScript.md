@@ -127,6 +127,25 @@ bigint：bigint
 > fn();				//此时会报错，因为至少传一个实参
 > ```
 
+### 默认值设置
+
+> 作用：给函数的形参设置默认值，当调用函数时，没有给该形参传值时，形参自动使用默认值
+>
+> 语法：`function (变量1: any, 变量2 = 'abc') {}`
+>
+> 如：
+>
+> ```ts
+> const fn = (val: string | number | undefined | boolean | null, unit = "") => {
+>     let str = unit + "123";
+>     console.log(typeof str);
+> };
+> 
+> fn(132);				//此时的unit为""
+> ```
+>
+> 
+
 ### 对象
 
 > 对象由属性和方法组成，需要对属性和方法的返回值分别进行类型声明
