@@ -153,7 +153,7 @@ vm.$mount('#app');
 
 > 定义：直接在html标签内放入变量名
 >
-> 语法：`{{name}}`
+> 语法：`{{ name }}`
 >
 > 参数：name：变量名
 >
@@ -395,7 +395,7 @@ vm.$mount('#app');
 >
 > 注：key的值不易与下标index相同，因为index会随着数组变化而变化
 
-> 如果不加key，那对于节点的增加或删除，只要触发节点操作，就执行一次；操作多次，执行多次；加了key，因为key与id一样，具有唯一性，因此对于节点的操作只有一次
+> 如果不加key，那对于节点的增加或删除，只要触发节点操作，就执行一次；操作多次，执行多次；加了key，因为key与id一样，具有唯一性，因此对于节点的操作只有一次（比如想删除第二个，其index为1，如果没有key，则删掉后其下一个又会变为index=1，导致该删除操作可再次执行）
 > 
 >即：无key，状态默认绑定的是位置（index 下标）
 > 有key，状态根据key值绑定的内容（建议用id绑定，以达到唯一性）
@@ -408,7 +408,7 @@ v-bind和v-on都是事件指令
 >
 > 如：`<img :src="./xxx.png">`
 >
-> 作用：动态地绑定一个或多个属性，或者一个组件prop到表达式
+> 作用：动态地绑定一个或多个属性，或者一个组件prop到表达式（父子通讯）
 >
 > 注：v-bind必须跟JS表达式
 
@@ -451,7 +451,7 @@ v-bind和v-on都是事件指令
 
 ### v-on
 
-> 语法：`v-on：事件名="方法名"`		||		`@ 事件名="方法名"`
+> 语法：`v-on:事件名="方法名"`		||		`@ 事件名="方法名"`
 >
 > 作用：绑定一个事件或多个事件，事件函数的参数名代表了在方法对象methods中所定义的函数
 >
@@ -691,7 +691,7 @@ let vm = new Vue({
 
 生命周期的定义：每个 Vue 实例在被创建时都要经过一系列的初始化过程，例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会运行一些叫做生命周期钩子的函数，这给了用户在不同阶段添加自己的代码的机会。
 
-![Vue_生命周期](E:\笔记\image\Vue_生命周期.png)
+![Vue_生命周期](..\image\Vue_生命周期.png)
 
 ```js
 let vm = new Vue({
@@ -809,7 +809,7 @@ let vm = new Vue({
 </script>
 ```
 
-打印结果：					![Vue_钩子函数_binding](E:\笔记\image\Vue_钩子函数_binding.png)
+打印结果：					![Vue_钩子函数_binding](..\image\Vue_钩子函数_binding.png)
 
 ------
 
@@ -982,7 +982,7 @@ let vm = new Vue({
 > watch: {
 >    	num: {
 >    	    //handler：类似于基本类型的侦听的函数
->    	    handler(newVal, oldVal) {
+>    	    handle(newVal, oldVal) {
 >    	        doSomethings();
 >    	    }
 >    	},
@@ -1027,6 +1027,8 @@ Vue本身的$watch方法就是取消侦听器的方法，因此可以直接在$w
 
 作用：组件可以扩展 HTML 元素，封装可重用的代码
 
+父组件是会要等子组件加载成功的。如果`Child`组件一直没加载成功，那么父组件会一直等着他。
+
 ## 组件命名
 
 可以使用 	`		-		小驼峰		大驼峰`		但是在标签中，大写的字母必须使用 - 隔开，并化为小写（在Vue中可以不考虑，因为会隐式转换，但是Vue有 - 时，必须用引号包裹）
@@ -1045,7 +1047,7 @@ Vue本身的$watch方法就是取消侦听器的方法，因此可以直接在$w
 
 如：
 
-```js
+```ts
 let myextend = Vue.extend({
 	template: `<div>xx
 				  <p>xxx</p>
@@ -1174,14 +1176,15 @@ component做元组件
 >
 > 如：
 >
-> ```ts
+> ```vue
 > <script setup>
-> import Foo from './Foo.vue'
-> import Bar from './Bar.vue'
+> 	import Foo from './Foo.vue'
+> 	import Bar from './Bar.vue'
 > </script>
 > 
 > <template>
->   <component :is="Math.random() > 0.5 ? Foo : Bar" />
+> 	<component :is="Math.random() > 0.5 ? Foo : Bar" />
+> 	<!-->表示当随机数大于0.5时展示Foo组件，否则展示Bar</-->
 > </template>
 > ```
 >
@@ -1506,7 +1509,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
         <button @click="deliver()">传值</button>
     </div>
 </template>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 <script>
     let Son = {
         template: '#son',
@@ -1550,8 +1553,8 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
 
 ```html
 <div id="app">
-    <!-- 通过v-on绑定msgs事件（msgs是自定义事件），并赋值为父组件的data：fMsg -->
-    <my-son :msgs.sync="fMsg"></my-son>
+    <!-- 通过v-on绑定get-msg事件（get-msg是自定义事件），并赋值为父组件的data：fMsg -->
+    <my-son :get-msg.sync="fMsg"></my-son>
     <h4>子组件传过来的值：{{fMsg}}</h4>
 </div>
 
@@ -1572,7 +1575,7 @@ props可以是一个数组，也可以是一个对象（对象的属性值，可
         },
         methods: {
             deliver() {
-                this.$emit('update:msgs', this.msg);		//emit的第一个参数，必须跟update；msgs是自定义事件，配合父组件的v-on使用
+                this.$emit('update:get-msg', this.msg);		//emit的第一个参数，必须跟update；get-msg是自定义事件，配合父组件的v-on使用
             }
         }
     }
@@ -1688,8 +1691,8 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 ```html
 <div id="app">
-    <my-son></my-son>											//结果：先显示 “我是子组件” ， 再显示 “我是插槽”
-    <my-son>我是父组件</my-son>									//结果：先显示 “我是子组件” ， 再显示 “我是父组件”
+    <my-son></my-son>												<!--结果：先显示 “我是子组件” ， 再显示 “我是插槽”-->
+    <my-son>我是父组件</my-son>										 <!--结果：先显示 “我是子组件” ， 再显示 “我是父组件”-->
     <my-son> <div>我是div</div> <span>我是span</span> </my-son>			 <!--结果：先显示 “我是子组件” ， 再显示 “我是div” “我是span”-->
 </div>
 
@@ -1723,7 +1726,11 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 ```html
 <div id="app">
-    <my-son slot="no1">我是父组件</my-son>										 //结果：显示 “我是父组件”  “我是插槽2”  “我是插槽3”
+    <my-son>						
+        <div v-slot:no1>								<!-->或者写成   <template #no1>  <-->
+        	我是父组件
+        </div>
+    </my-son>										 //结果：显示 “我是父组件”  “我是插槽2”  “我是插槽3”
 </div>
 
 <template id="my-son">
@@ -1735,9 +1742,21 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 </template>
 ```
 
-在slot标签中，name也是一个属性，因此可以通过v-bind绑定，实现对name值的动态绑定
+在slot标签中(创建slot时)，name也是一个属性，因此可以通过v-bind绑定，实现对name值的动态绑定
+
+在使用slot时，也可以动态绑定：`v-slot:[name]`或 `#[name]`
+
+注：
+
+> 1、具名插槽在被调用时，只能用div或者template包裹起来
+>
+> 2、一般不用 `slot="xxx"`，而是使用 `v-slot:xxx`或者 `#xxx`
+>
+> 3、创建具名插槽时，不给name，则默认name='default'；在调用具名插槽时，不指定名字，默认是覆盖default插槽
 
 ### 作用域插槽 v-slot
+
+插槽的内容无法访问到子组件的状态，因此使用作用域插槽解决：通过创建插槽时，给一个类似props
 
 #### 编译作用域
 
@@ -1788,6 +1807,7 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
     <my-son>
         <!-- 使用v-slot接受具名插槽abc的数据，并把它命名为cba（cba是随便自定义的） -->
         <template v-slot="cba">
+            <!-- 在没有使用作用域插槽前，该template无法拿到子组件mySon的arr数据的 -->
             {{cba}}
         </template>
     </my-son>
@@ -1827,23 +1847,24 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 返回的是一个对象，因此可以在插值表达式里面调用属性：cba.abc
 
-### 具名插槽和v-slot合用
+因为和props很类似，因此其也能同时传递多个值，再用cba来打点调用
 
-```html
+### 具名作用域插槽
+
+```vue
 <div id="app">
     <my-son>
-    	<template v-slot:item>我是插槽</template>
+    	<template v-slot:item="itemProps">我是插槽item，我接受的传值是 {{itemProps.count}}</template>
+        <!-->v-slot跟的是slot的名字，等号之后的则是传过来的obj，可以直接obj打点调用传过来的内容<-->
     </my-son>
 </div>
 
 <template id="mySon">
     <div>
-        <slot name="item"></slot>
+        <slot name="item" count="1"></slot>
     </div>
 </template>
 ```
-
-
 
 ------
 
@@ -1929,75 +1950,85 @@ slot给了默认值，当父组件的子组件标签无内容，则显示默认�
 
 2、在模块化工程中使用它
 
-> 原因：vue-router是一个插件
+原因：vue-router是一个插件
+
+### 引入
+
+vue-router常用的版本有v2和v4，v2是支持vue2，vue2以上的则是支持vue3的
+
+#### v2版本
+
+> (1) 导入路由对象，并且调用 Vue.use(VueRouter)
 >
-> 方法：
+> ```js
+> import Vue from 'vue' 
+> import VueRouter from 'vue-router' 
+> Vue.use(VueRouter)
+> ```
 >
-> > (1) 导入路由对象，并且调用 Vue.use(VueRouter)
-> >
-> > ```js
-> > import Vue from 'vue' 
-> > import VueRouter from 'vue-router' 
-> > Vue.use(VueRouter)
-> > ```
-> >
-> > (2) 创建路由实例，并且传入路由映射配置，并在Vue实例中挂载创建的路由实例
-> >
-> > 此时需要在main.js文件中进行配置（或单独设置一个router.js文件，并在main.js只能怪引入）
-> >
-> > ```js
-> > import Vue from 'vue';
-> > import App from './App.vue';
-> > import VueRouter from 'vue-router';
-> > //启动路由功能
-> > Vue.use(VueRouter);
-> > 
-> > //引用组件
-> > import Home from './View/Home.vue';
-> > import About from './View/About.vue';
-> > 
-> > 
-> > //1、配置路径与组件的映射关系（即路由路径和组件的对应关系）
-> > const routes = [{
-> >            path: '/home', //路由路径（即：网页的网址后缀）
-> >            component: Home //路由跳转的组件（即：网特跳转的页面）
-> >      },
-> >      {
-> >            path: '/about',
-> >            component: About
-> >      }
-> > ]
-> > 
-> > //2、创建路由实例，传入路由映射配置
-> > const router = new VueRouter({
-> >      routes, //传入路由配置
-> > });
-> > 
-> > new Vue({
-> >      router, //3、挂载路由
-> >      render: h => h(App),
-> > }).$mount('#app')
-> > ```
-> >
-> > **注**：routes是固定写法，不能改变（更换为任何其他单词都不可以）
-> >
-> > (3) 在App.vue文件中引入router-view标签，以展示 路由渲染的组件的页面
-> >
-> > ```vue
-> > <template>
-> >     <div id="app">
-> >          <h1>我是router-view外的内容</h1>
-> >          <!-- 利用router-view 展示 路由渲染的组件的页面 -->
-> >          <router-view></router-view>
-> >     </div>
-> > </template>
-> > ```
-> >
-> > 注：在router-view标签之外的标签，不会因为页面跳转而变化
-> > 即：router-view切换的是挂载的组件，其余内容不发生改变（常用在layouts不动的页面中）
-> > 因此，此处的h1标签会一直存在
-> >
-> > router-view是可以被router-link代替
+> (2) 创建路由实例，并且传入路由映射配置，并在Vue实例中挂载创建的路由实例
+>
+> 此时需要在main.js文件中进行配置（或单独设置一个router.js文件，并在main.js只能够引入）
+>
+> ```js
+> import Vue from 'vue';			//vue3是import { createApp } from 'vue';
+> import App from './App.vue';
+> import VueRouter from 'vue-router';
+> //启动路由功能
+> Vue.use(VueRouter);				//vue3是createApp(App).use(VueRouter);
+> 
+> //引用组件
+> import Home from './View/Home.vue';
+> import About from './View/About.vue';
+> 
+> 
+> //1、配置路径与组件的映射关系（即路由路径和组件的对应关系）
+> const routes = [{
+>            path: '/home', //路由路径（即：网页的网址后缀）
+>            component: Home //路由跳转的组件（即：网特跳转的页面）
+>      },
+>      {
+>            path: '/about',
+>            component: About
+>      }
+> ]
+> 
+> //2、创建路由实例，传入路由映射配置
+> const router = new VueRouter({
+>      routes, //传入路由配置
+> });
+> 
+> new Vue({
+>      router, //3、挂载路由
+>      render: h => h(App),
+> }).$mount('#app')
+> ```
+>
+> **注**：routes是固定写法，不能改变（更换为任何其他单词都不可以）
+>
+> (3) 在App.vue文件中引入router-view标签，以展示 路由渲染的组件的页面
+>
+> ```vue
+> <template>
+>     <div id="app">
+>          <h1>我是router-view外的内容</h1>
+>          <!-- 利用router-view 展示 路由渲染的组件的页面 -->
+>          <router-view></router-view>
+>     </div>
+> </template>
+> ```
+>
+> 注：在router-view标签之外的标签，不会因为页面跳转而变化
+> 即：router-view切换的是挂载的组件，其余内容不发生改变（常用在layouts不动的页面中）
+> 因此，此处的h1标签会一直存在
+>
+> router-view是可以被router-link代替
+
+#### v4版本
+
+> (1) 导入路由对象
+
+以下内容，v2和v4都通用
 
 ###  路由记录meta
 
@@ -2019,10 +2050,10 @@ meta可以在路由地址和导航守卫上被访问到
 >             permission: 1,
 >         }
 >   },
->   {
->         path: '/about',
->         component: About
->   }
+>   	{
+>    	     path: '/about',
+>    	     component: About
+>   	}
 > ]
 > ```
 >
@@ -3015,10 +3046,15 @@ actions也是一个对象
 
 区别（只有部分）：
 
-> 1、创建：Vue3直接使用createAPP创建；Vue2则需要new一个Vue实例，再利用render渲染
+> 1、创建：**Vue3直接使用createApp创建**；Vue2则需要new一个Vue实例，再利用render渲染
+>
+> ```ts
+> import { createApp } from 'vue';
+> createApp().use();
+> ```
 >
 > 2、在vue文件中，舍弃了propsData的父子通讯，采用defineProps进行自定义props属性
->      reactive和ref：在setup中返回的数据不是响应式的，必须使用reactive或ref函数来包装，才能进行引用
+>   reactive和ref：在setup中返回的数据不是响应式的，必须使用reactive或ref函数来包装，才能进行引用
 
 vite创建：npm init vite 自定义名称
 
@@ -3048,7 +3084,19 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 
 注：
 
-> 1、在Vue3.2之后，setup函数写在 `<script setup></script>`里面了，同时不需要return，但同样需要ref和reactive
+> 1、在Vue3.2之后，setup函数写在 `<script setup></script>`里面了，同时不需要return，但同样需要ref和reactive。
+> 如果需要异步，则在script顶部加上await表达式
+>
+> ```vue
+> <script setup>
+> const res = await fetch(...)
+> const posts = await res.json()		//此时的posts就是异步等待后得到的
+> </script>
+> 
+> <template>
+>   {{ posts }}
+> </template>
+> ```
 >
 > 2、以下所有都是在setup函数里面，如 ref ~ watch、生命周期
 
@@ -3110,7 +3158,7 @@ setup中若需将 变量或方法 传给 Vue实例或插值表达式 （类似�
 > > setup(){
 > > 	let obj = reactive({
 > >         person: {
-> > 		   name: 'wz',
+> >          name: 'wz',
 > >             age: 18
 > >         }
 > >     });
@@ -3348,6 +3396,8 @@ provide可以传给子，也可以传给孙等
 
 ### props父传子
 
+父传子中，需要传的数据不需要是响应式的，同时在子组件接收到数据的时候，会自动将其转化为响应式
+
 #### props
 
 > 作用：获取组件传值（与Vue2的props类似）
@@ -3356,17 +3406,17 @@ provide可以传给子，也可以传给孙等
 >
 > ```ts
 > const props = defineProps({
->   child: {
->     type:String, // 参数类型
->     default: 1, //默认值
->     required: true, //是否必传
->     validator: value => {
->       return value >= 0 // 除了验证是否符合type的类型，此处再判断该值结果是否符合验证
->     }
->   },
->   sda: String, //undefined
->   strData: String,
->   arrFor: Array
+>   	child: {
+>             type:String, // 参数类型
+>             default: 1, //默认值
+>             required: true, //是否必传
+>             validator: value => {
+>                   return value >= 0 // 除了验证是否符合type的类型，此处再判断该值结果是否符合验证
+>             }
+>   	},
+>   	sda: String, //undefined
+>   	strData: String,
+>   	arrFor: Array
 > })
 > 
 > //子组件声明了的 props ，若父组件未传，则该值为 undefined 
@@ -3469,7 +3519,7 @@ provide可以传给子，也可以传给孙等
 > > 	//data
 > > 	const msg = ref('欢迎使用vite！')
 > > 	//methods
-> > 	const do = (params)=>{
+> > 	const do = (params) => {
 > >   		console.log(params);
 > > 	}
 > > </script>
@@ -3487,24 +3537,23 @@ provide可以传给子，也可以传给孙等
 >   	obj.name = '我叫改变'
 > };
 > 
-> 
 > defineExpose({
->         a,
+>      a,
 >         obj,
 >         handleClick2
-> })
+>    })
 > 
 > //亦或
 > const a = 1
 > const b = ref(2)
 > 
 > defineExpose({
->   	a,
+> 	a,
 >   	b
-> })
+>   })
 > ```
->
 > 
+>
 
 ------
 

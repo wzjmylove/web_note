@@ -126,14 +126,15 @@ ldh.sing ( '冰雨' ) ;				  //结果是 刘德华的歌曲冰雨
 >
 > 2、该函数无需return，默认返回这个对象
 >
-> 3、构造函数名首字母要大写（惯用方法，便于区分普通函数）
+> 3、构造函数名首字母要大写（惯用写法，便于区分普通函数）
 >
 > 4、var ldh = new Star ( ) 这个调用函数返回的是一个对象，即console.log( typeof ldh )     结果是object
 >
 > 5、调用构造函数时，必须使用new
 > new有一个隐式三步骤：`var this = {} ; this.xxx ; return this ;`
+> 因此也证明了第2点中构造函数无需return，且其this是指向函数本身（如果不new而是直接调用，则this仍指向window）
 >
-> 6、只要调用了new Star ( ) ,就创建了一个新对象
+> 6、只要调用了new Star ( ) ,就创建了一个新对象，**所有new一个对象都会执行一遍其构造函数**（如果构造函数内有打印等操作，就会在new的时候触发打印等操作）
 >
 > 7、属性和方法之前必须添加this
 
@@ -159,13 +160,13 @@ function sing() {
     console.log(this.name + '会唱歌');
 }
 
-var wz = new Student('王泽', 18);
-var wzj = new Student('王紫晶',16);
+var wz = new Student('wz', 18);
+var max = new Student('max',16);
 
-wz.skill();	//结果：王泽会唱歌
+wz.skill();	//结果：wz会唱歌
 
-wzj.age === wz.age 		//结果：false,因此每创建一个实力对象，都会开辟新的job的地址，造成空间浪费
-wzj.skill === wz.skill	//结果：true（是同一个内存地址）
+max.age === wz.age 		//结果：false,因此每创建一个实力对象，都会开辟新的job的地址，造成空间浪费
+max.skill === wz.skill	//结果：true（是同一个内存地址）
 ```
 
 1.1、解决命名冲突问题
@@ -196,13 +197,13 @@ var Student = function(name, age) {
 
 Student.prototype.job = '前端开发';
 
-var wz = new Student('王泽', 18);
-var wzj = new Student('王紫晶',16);
-console.log(wz);		//结果：Student { name: '王泽', age: 18 }	这里面没有job属性，但该实例对象下的prototype对象里面有job属性
+var wz = new Student('wz', 18);
+var max = new Student('max',16);
+console.log(wz);		//结果：Student { name: 'wz', age: 18 }	这里面没有job属性，但该实例对象下的prototype对象里面有job属性
 console.log(wz.job);	//结果：前端开发
 
-wzj.age === wz.age 		//结果：false
-wz.job === wzj.job		//结果：true（是同一个内存地址）
+max.age === wz.age 		//结果：false
+wz.job === max.job		//结果：true（是同一个内存地址）
 ```
 
 ![js_原型](..\image\js_原型.png)
@@ -249,19 +250,21 @@ wz.sing();	//结果：王泽开始唱歌
 
 #### 增、改属性/方法
 
-直接在对象后面加 Object.XXX = XX；
-若对象无XXX属性，则增加改属性 ； 若对象有XXX属性，则更改其值
+> 语法：直接在对象后面加 `Object.XXX = XX`
+>
+> 注：若对象无XXX属性，则增加改属性 ； 若对象有XXX属性，则更改其值
 
 #### 删除属性
 
-delete Obiject.XXX;
-删除对象的XXX属性
+> 语法：`delete Obiject.XXX`
+>
+> 作用：删除对象的XXX属性
 
 #### 遍历
 
 ##### for in 遍历对象
 
-for ( 变量 in 对象 ) { }
+> 语法：`for ( 变量 in 对象 ) { }`
 
 例：
 
@@ -274,7 +277,7 @@ for ( var k in obj ) {
 
 ##### Object自带方法
 
-结合本章后面笔记  ES5新增方法  ->  对象  ->  keys、values
+结合本章后面笔记  ES5新增方法  -  对象  -  keys、values
 
 > `Object.keys()`		 访问对象的属性名，如 name、age、sex
 >
@@ -288,8 +291,8 @@ for ( var k in obj ) {
 ```js
 var key = Object.keys(Star);
 for(var i = 0; i < key.length; i++){
-    console.log(key[i]);		//返回属性名
-    console.log(Star[key[i]]);	 //返沪属性值
+    console.log(key[i]);		 //返回属性名
+    console.log(Star[key[i]]);	 //返回属性值
 }
 ```
 
@@ -328,13 +331,15 @@ wz.skill() //结果：干饭
 
 //不可以通过构造函数访问实例成员
 console.log(Person.age); //结果：undefined
+console.log(Person.skill); //结果：undefined
 
 //静态成员，在构造函数本身添加的成员就是静态成员
 Person.sex = '男';
 console.log(Person.sex); //结果：男
 
-//静态成员只能通过构造函数来访问，不能通过实例对象来访问
+//静态成员只能通过构造函数来访问，不能通过实例对象来访问		
 console.log(wz.sex); //结果：undefined
+//就算 Person.sex = '男' 放在 var wz = new Person('王泽', 18)	之后，也是 undefined
 ```
 
 ## 原型
@@ -348,7 +353,7 @@ console.log(wz.sex); //结果：undefined
 >
 > 3、引用类型的`__proto__`属性都指向它 构造函数的 prototype
 
-作用：
+原型的作用：
 
 > 1、实现数据共享，节省空间
 >
@@ -414,7 +419,7 @@ wz.constructor === Student 	//结果：false（因为实例对象wz的prototype�
 
 ```js
 Student.prototype = {
-    constructor:Student,
+    constructor: Student,
     job: '前端开发',
     sayName: function() {
         console.log('你好' + this.name);
@@ -426,7 +431,7 @@ wz.constructor === Student	//结果：true
 
 #### `__proto__`
 
-每个对象都会有一个属性`__proto__` 指向构造函数的prototype 原型对象，之所以我们对象可以使用构造函数prototype 原型对象的属性和方法，就是因为对象有`__proto__` 原型的存在
+每个实例对象都会有一个属性`__proto__` 指向构造函数的prototype 原型对象，之所以我们对象可以使用构造函数prototype 原型对象的属性和方法，就是因为对象有`__proto__` 原型的存在
 
 ![js_原型_proto](..\image\js_原型_proto.png)
 
@@ -451,7 +456,7 @@ console.log(stu1.prototype);	//结果：undefined
 console.log(stu1.__proto__);	// stu1.__proto__ === Student.prototype
 ```
 
-综上，若需要获得对象的原型，引用类型需要用 `XXX.__proto__`；构造函数需要用`XXX.prototype`
+综上，若需要获得对象的原型，实例类型需要用 `XXX.__proto__`；构造函数需要用`XXX.prototype`
 
 ### 构造函数、实例、原型 三者的关系
 
@@ -473,7 +478,7 @@ console.log(stu1.__proto__);	// stu1.__proto__ === Student.prototype
 >
 > ⑤ `__proto__`对象原型的意义就在于为对象成员查找机制提供一个方向，或者说一条路线
 
-Object的原型对象：例如daibai这个实例对象，其原型（daibai的原型是`__proto__`）指的是Person这个构造函数，而Person原型对象中的constructor指向了Person本身，而Person原型对象也可以视作Object的一个实例化对象（即构造函数Person的`__proto__`指的是Object）
+Object的原型对象：例如daibai这个实例对象，其原型（daibai的原型是`__proto__`）指的是Person的原型对象，而Person原型对象中的constructor指向了Person本身，而Person原型对象也可以视作Object的一个实例化对象（即构造函数Person的`__proto__`指的是Object的原型，Person的constructor指向的是Object）
 
 ### instanceof
 
@@ -483,6 +488,37 @@ Object的原型对象：例如daibai这个实例对象，其原型（daibai的�
 > 即，检测stu1是否在Student上，是则返回true
 >
 > 返回：Boolean值
+
+如：
+
+```ts
+// 定义构造函数
+function C(){}
+function D(){}
+
+var o = new C();
+
+
+o instanceof C; // true，因为 Object.getPrototypeOf(o) === C.prototype
+
+
+o instanceof D; // false，因为 D.prototype 不在 o 的原型链上
+
+o instanceof Object; // true，因为 Object.prototype.isPrototypeOf(o) 返回 true
+C.prototype instanceof Object // true，同上
+
+C.prototype = {};
+var o2 = new C();
+
+o2 instanceof C; // true
+
+o instanceof C; // false，C.prototype 指向了一个空对象，o.__proto__ 不是现在的 C.prototype，因此o已经不在当前C的原型链上了
+
+D.prototype = new C(); // 继承
+var o3 = new D();
+o3 instanceof D; // true
+o3 instanceof C; // true 因为 C.prototype 现在在 o3 的原型链上
+```
 
 ## 继承
 
@@ -514,12 +550,12 @@ Object的原型对象：例如daibai这个实例对象，其原型（daibai的�
 >
 > ```js
 > Son.prototype = new Father();
-> Son.prototype.constructtor = Son;
+> Son.prototype.constructor = Son;
 > ```
 
 ##### 方法
 
-给子元素的原型指向父元素的实例	`Son.prototype = new Father() ; Son.prototype.constructtor = Son ;`
+给子元素的原型指向父元素的实例	`Son.prototype = new Father() ; Son.prototype.constructor = Son ;`
 
 例：
 
@@ -539,7 +575,7 @@ function Son(name, age) {
 
 //子类继承父类
 Son.prototype = new Father();
-Son.prototype.constructtor = Son;
+Son.prototype.constructor = Son;
 
 //子类实例
 var son1 = new Son('王泽', 22);
@@ -562,7 +598,7 @@ function Father(name) {
 
 //父类的原型里的方法
 Father.prototype.havemoney = function() {
-    console.log(`${this.name}有一千万`);
+    console.log(`${this.name}有一千万`);	//此时当new实例后this指向Father
 }
 
 //子类
@@ -573,7 +609,7 @@ function Son(name, age) {
 
 //子类继承父类
 Son.prototype = new Father();
-Son.prototype.constructtor = Son;
+Son.prototype.constructor = Son;
 
 //子类的原型里的方法    
 //注：该代码应该在继承代码之后，因为此时子类的原型是父类的一个实例；如果该代码放在继承的前面，那么在继承后，子类的原型将不再是子类，该代码是原子类原型里面的，父类实例里面没有，因此无法调用该方法
@@ -600,16 +636,16 @@ son1.study();
 >
 > ```js
 > function Father(name) {
->    	this.friends = ['张三', '李四']
+> 	this.friends = ['张三', '李四']
 > }
 > 
 > function Son(name, age) {
->    	this.name = name,
->    	this.age = age
+> 	this.name = name,
+> 	this.age = age
 > }
 > 
 > Son.prototype = new Father();
-> Son.prototype.constructtor = Son;
+> Son.prototype.constructor = Son;
 > 
 > var son1 = new Son('wz', 22);
 > var son2 = new Son('Max', 18);
@@ -618,6 +654,7 @@ son1.study();
 > son1.friends.push('王五');
 > console.log(son1.friends);
 > console.log(son2.friends);
+> // 此时 son1.friends === son2.friends （原因：其指向的都是Father原型上的）
 > ```
 >
 > 结果：
@@ -625,7 +662,7 @@ son1.study();
 > ![js_继承_原型链继承_隐患1](..\image\js_继承_原型链继承_隐患1.png)
 >
 
-缺点2、不能向父类传递参数（见第一个结果，里面money为undefined，因为子类传参是给的子类的原型，父类接受不到）
+缺点2、不能向父类传递参数（见“例二”结果，里面money为undefined，因为子类传参是给的子类的原型，父类接受不到）
 
 解决办法：借用构造函数
 
@@ -641,9 +678,45 @@ son1.study();
 >
 > 核心：子类的构造函数内部调用父类的构造函数，并且传入this指针
 >
-> 注：**借用构造函数没法继承父类的方法**
+> 注：**借用构造函数没法继承父类原型上的方法**
 > 因此 借用构造函数继承+原型链继承 而成的 组合继承 能全部继承
->
+
+如：
+
+```ts
+function Father(name) {
+  this.sing = () => {
+    console.log(`${this.name} can sing`);
+  }
+}
+
+Father.prototype.skill = function () {
+  console.log('Father has skills');
+}
+Father.prototype.uname = 'w';
+
+function Son(name, age) {
+  //借用构造函数的继承
+  Father.call(this);
+  this.name = name,
+  this.age = age
+}
+
+var son1 = new Son('wz', 22);
+var son2 = new Son('Max', 18);
+
+
+son1.sing();
+console.log(son1.uname);	//undefined，因为单个借用构造函数无法继承父类的原型
+son1.skill();	//会报错，因为单个借用构造函数无法继承父类的原型
+```
+
+结果：
+
+![js_继承_借用构造函数继承_result](..\image\js_继承_借用构造函数继承_result.png)
+
+##### call()、apply()
+
 > 通过call()、apply()方法
 >
 > > call()：可以修改this的指向，括号内可以带参数
@@ -651,6 +724,8 @@ son1.study();
 > > apply()：可以修改this的指向，括号内可以带参数，且参数必须是数组形式，多个参数写在一个数组内
 > >
 > > 两个方法没有太大区别，唯一区别是call接受的是参数列表，apply接受的是一个参数数组
+>>
+> > 注：调用call()、apply()都会去执行一次，如 `fn.apply(this,arguments)`，此时会执行一次fn函数
 >
 
 ##### 目的
@@ -665,14 +740,14 @@ son1.study();
 
 ```js
 function Father(name) {
-    this.friends = ['张三', '李四']
+  this.friends = ['张三', '李四']
 }
 
 function Son(name, age) {
-    //借用构造函数的继承
-    Father.call(this);
-    this.name = name,
-    this.age = age
+  //借用构造函数的继承
+  Father.call(this);
+  this.name = name,
+  this.age = age
 }
 
 var son1 = new Son('wz', 22);
@@ -686,11 +761,11 @@ console.log(son2.friends);
 
 结果：
 
-![js_继承_组合继承1](..\image\js_继承_组合继承1.png)
+![js_继承_借用构造函数_解决子类共享问题](..\image\js_继承_借用构造函数_解决子类共享问题.png)
 
 ###### 解决子类传参给父类问题
 
-缺点二的解决：解决原型链继承不能向父类传递参数的问题：`call(this,name,...'参数名')`或`apply(this,['参数名'])`
+缺点二的解决：解决原型链继承不能向父类传递参数的问题：`call(this, 参数名)`或`apply(this, [参数名])`
 
 例：
 
@@ -702,7 +777,7 @@ function Father(name) {
 
 function Son(name, age) {
     Father.call(this, name);
-    //Father.apply(this,[name])
+    //Father.apply(this, [name])
     this.name = name;
     this.age = age
 }
@@ -711,12 +786,64 @@ var son1 = new Son('wz', 22);		//结果会打印	我的名字是wz
 var son2 = new Son('Max', 18);		//结果会打印	我的名字是Max
 ```
 
-##### 借用构造函数的缺点
+##### 借用构造函数继承的缺点
 
-缺点3：无论什么情况下，都会多调用一次父类构造函数（原型链继承那段代码会调用一次：`Son.prototype = new Father()`）
+缺点3：无论什么情况下，都会多调用一次父类构造函数（借用构造函数继承那段代码会调用一次：`Father.call(this);`）
 因此，如果父类有log等操作，则会多执行一次
 
+如：
+
+```ts
+function Father(name) {
+  this.friends = ['张三', '李四']
+  console.log('I am Father');
+}
+
+function Son(name, age) {
+  //借用构造函数的继承
+  Father.call(this);
+  this.name = name,
+  this.age = age
+}
+
+var son1 = new Son('wz', 22);	// 会打印 I am Father
+var son2 = new Son('Max', 18);	// 会打印 I am Father
+```
+
 解决：利用寄生式组合，免去了new Father这一步骤
+
+#### 借用构造函数+基于原型链继承
+
+```ts
+function Father(name) {
+  this.friends = ['张三', '李四']
+  this.sing = () => {
+    console.log(`${this.name} can sing`);
+  }
+}
+
+Father.prototype.skill = function () {
+  console.log('Father has skills');
+}
+Father.prototype.uname = 'w';
+
+function Son(name, age) {
+  //借用构造函数的继承
+  Father.call(this);
+  this.name = name,
+    this.age = age
+}
+
+Son.prototype = new Father();
+Son.prototype.constructor = Son;
+
+var son1 = new Son('wz', 22);
+var son2 = new Son('Max', 18);
+
+son1.sing();				// wz can sing
+console.log(son1.uname);	 // w
+son1.skill();				// Father has skills
+```
 
 ### 寄生组合继承
 
@@ -729,7 +856,7 @@ var son2 = new Son('Max', 18);		//结果会打印	我的名字是Max
 其思路与基于原型链继承不完全一样
 
 > 核心：需要创建一个临时的构造函数，并将父类的对象作为构造函数的原型，返回一个新对象
->   		 其他继承都需要有一个子类构造函数，而原型式继承会新建一个对象
+>   		   其他继承都需要有一个子类构造函数，而原型式继承会新建一个对象
 >
 > 语法：
 >
@@ -738,7 +865,7 @@ var son2 = new Son('Max', 18);		//结果会打印	我的名字是Max
 >    	//临时构造函数
 >    	function Fn() {}
 >    	Fn.prototype = obj;
->    	Fn.prototype.constructtor = Fn
+>    	Fn.prototype.constructor = Fn
 >    	return new Fn();
 > }
 > //或
@@ -765,7 +892,7 @@ function inherit(obj) {
         this.uname = '王'
     }
     Fn.prototype = obj;
-    Fn.prototype.constructtor = Fn
+    Fn.prototype.constructor = Fn
     return new Fn();
 }
 //上诉代码可以利用es5新增方法：Object.create()
@@ -820,16 +947,18 @@ console.log('新朋友添加后：', son2.friends);
 >
 > ```js
 > function Son () {
->    	Father.call(this)
+> 	Father.call(this)
 > }
 > 
 > Son.prototype = Object.create(Father.prototype)
-> Son.prototype.constructtor = Son;
+> Son.prototype.constructor = Son;
 > ```
 >
 > 作用：继承属性和方法
+>
+> 缺点：因为加入了call、apply，仍然会执行一遍Father
 
-对比组合继承，少了一个new Father一个步骤
+对比组合继承，少了一个new Father一个步骤（从 `Son.prototype = new Father`变成了 `Son.prototype = Object.create(Father.prototype)`）
 
 如：
 
@@ -848,14 +977,14 @@ Father.prototype.havemoney = function() {
 
 //子类
 function Son(name, age) {
-    Father.call(this,name)
+    Father.call(this, name)
     this.name = name;
     this.age = age
 }
 
 //子类继承父类
 Son.prototype = Object.create(Father.prototype)
-Son.prototype.constructtor = Son;
+Son.prototype.constructor = Son;
 
 Son.prototype.study = function() {
     console.log(`${this.name}正在学习前端`);
@@ -888,30 +1017,32 @@ JS的数据类型分为：
 >
 > 引用数据类型：object、array、Date
 
-在引用类型中，还有三个特殊的引用类型，和基本数据类型相似，我们称之为包装类（基本类型包装类）：Boolean、Number、String 
+在基本数据类型中，还有三个特殊的基本数据类型，其使用和引用数据类型相似，我们称之为包装类（基本类型包装类）：Boolean、Number、String 
+
+原因：这三个基本数据类型能够调用方法、属性等
 
 如：正常的字符串是没法调用方法的，但是实际却能调用length等方法
 原因：JS会隐式通过new String()，来将该字符串进行对象化处理（但其仍是string类型，而非object）
 
 #### 字符串型
 
-**trim()** 
+##### trim ( ) 
 
-会从一个字符串的两端删除空白字符（首尾空格，中间的空格不管）
-
-语法：str.trim()
+> 语法：`str.trim()`
+>
+> 作用：会从一个字符串的两端删除空白字符（首尾空格，中间的空格不管）
 
 #### 数字型
 
-**toFixed()**
+##### toFixed ( )
 
-> 语法：num.toFixed( index )
+> 语法：`num.toFixed(index)`
 >
 > 参数：index 表示保留 index 位小数
 >
-> 如：num = 10 ; num.toFixed(3) ; 	结果：10.000
+> 如：`num = 10 ; num.toFixed(3)` 	结果：`10.000`
 >
-> 注：该方法会使num转化为string类型（即`typeof num.toFixed(2)`是 ' string ' ）
+> 注：该方法会使num转化为string类型（即`typeof num.toFixed(2)`是  string  ）
 >
 
 ### 数组
@@ -930,15 +1061,16 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 
 #### for in
 
-语法：`for(var key in arr)`
+> 语法：`for(var key in arr)`
+>
+> 作用：数组有多少长度，就遍历多少次，key是 index 的值
+>
+> 注：该方法对象也有，因此并非数组独有方法
+>
 
-数组有多少长度，就遍历多少次，key是 index 的值
+#### keys ( )
 
-注：该方法对象也有，因此并非数组独有方法
-
-#### keys()
-
-> 语法：arr.keys()
+> 语法：`arr.keys()`
 >
 > 作用：获取数组的下标，不能单独使用
 >
@@ -947,15 +1079,15 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 > 注：Object的keys()、values()、entries()数组都有，用法都同上（一般都用在for of中）
 > 
 
-可以结合Object.keys()看，并结合 ES6笔记 -> for of 循环
+可以结合Object.keys()看，并结合 ES6笔记 - ES6新增方法 - for of 循环
 
-#### forEach()
+#### forEach ( )
 
 不会对空数组进行检查
 
 > 作用：数组的遍历（不能用在数组的修改）
 >
-> 语法：arr.forEach ( function ( item , index , arr ) )
+> 语法：`arr.forEach(function(item, index, arr ))`
 >
 > 参数：
 >
@@ -980,7 +1112,19 @@ forEach、map、filter、（some、every	这俩返回值是一个Boolean），�
 
 #### map()
 
+> 作用：对数组的元素进行修改
+>
+> 如：
+>
+> ```ts
+> let arr = ['abc', true, 1234, undefined, 'aaa'];
+> let arr2 = arr.map((item) => {
+>   return item += '1';
+> }, [])	// arr2 是 ['abc1', 'true1', '12341', 'undefined1', 'aaa1']
+> ```
+>
 > 正常情况下，需要配合return使用，最后返回一个新数组
+>
 > 如果不用return，那么就map相当于一个forEach
 > 而forEach用return会返回undefined
 
@@ -1512,7 +1656,7 @@ function inherit(obj) {
     //临时构造函数
     function Fn() {}
     Fn.prototype = obj;
-    Fn.prototype.constructtor = Fn
+    Fn.prototype.constructor = Fn
     return new Fn();
 }
 //上诉代码可以利用es5新增方法：Object.create()
@@ -1696,17 +1840,56 @@ function shalloCopy(obj) {
 
 会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象。
 
-1、JSON序列化和反序列化：JSON.stringify()和JSON.parse()
+#### 序列化和反序列化
+
+JSON序列化和反序列化：JSON.stringify()和JSON.parse()
 
 > 原理：相当于创建了新的对象, 而且 会开辟新的栈空间,实现深拷贝
 >
-> 缺点：JSON不能接受函数，因此没法拷贝对象的方法（直接过滤掉function）
+> 缺点：
+>
+> > 1、JSON不能接受函数，因此没法拷贝对象的方法（直接过滤掉function）
+> >
+> > ```ts
+> > const obj = {
+> >     date: new Date()
+> > }
+> > 
+> > //序列化、反序列化后，date属性从对象变为了字符串，此时不能再调用obj.date.getTime()等方法
+> > ```
+> >
+> > 2、会丢失undefined类型
+> >
+> > ```ts
+> > const obj = {
+> >     a: undefined
+> > }
+> > const objCopy = JSON.parse(JSON.stringify(obj));
+> > // 结果： {}
+> > ```
+> >
+> > 3、当对象中有NaN、Infinity和-Infinity这三种值的时候 --- 会变成null
+> >
+> > > 1.7976931348623157E+10308 是浮点数的最大上线 显示为Infinity
+> > >
+> > > -1.7976931348623157E+10308 是浮点数的最小下线 显示为-Infinity
+> >
+> > 4、当对象循环引用的时候 --会报错
+> >
+> > ```ts
+> > const obj = {
+> >     objChild:null
+> > }
+> > obj.objChild = obj;
+> > ```
+> >
+> > 
 
-2、递归实现深度克隆（深拷贝）
+#### 递归实现深度克隆（深拷贝）
 
 > 原理：遍历对象、数组，直到里面都是基本数据类型，然后再去复制
 
-#### 代码
+代码
 
 ```js
 function deepCopy(obj) {
@@ -1733,3 +1916,15 @@ function deepCopy(obj) {
 }
 ```
 
+#### 第三方库lodash中的cloneDeep()方法
+
+其本质就是上面的递归函数
+
+```ts
+import lodash from 'lodash';
+const newObj = lodash.cloneDeep(obj);
+```
+
+
+
+总结：递归和lodash是最优的，基本不会有问题出现

@@ -70,11 +70,11 @@
 	<img src="./img/1.png" alt="">
     
     <script>
-     var btn = document.querySelector("img");
-     btn.onclick = function () {
-         btn.src = './img/2.png';
-     }
-</script>
+     	var btn = document.querySelector("img");
+     	btn.onclick = function () {
+     	    btn.src = './img/2.png';
+     	}
+	</script>
 </body>
 ```
 
@@ -88,20 +88,20 @@
 
 #### 方法监听注册方式（DOM 2级事件绑定）
 
-> 语法：dom.addEventListener( ' type ' , function ( ) { doSometings ; } , 布尔值)
+> 语法：`dom.addEventListener( 'type' , function () { doSometings; } , 布尔值)`
 >
 > 一个参数多次绑定同一事件类型，不会覆盖
 > 即：绑定多个函数时，函数会依次触发
-
-参数：
-
-> type：事件类型
 >
-> function：事件触发执行的函数（可以时具名函数，也可以是匿名函数）
+> 参数：
 >
-> 布尔值：false和true，一般给false（默认为false）
-> false：表示冒泡阶段
-> true：表示捕获阶段
+> > type：事件类型
+> >
+> > function：事件触发执行的函数（可以时具名函数，也可以是匿名函数）
+> >
+> > 布尔值：false和true，一般给false（默认为false）
+> > false：表示冒泡阶段
+> > true：表示捕获阶段
 
 具名函数：
 
@@ -194,7 +194,7 @@ mouseover事件和mouseenter事件，都是鼠标进入一个节点时触发。�
 | **方法**   | **描述**                                                     |
 | ---------- | ------------------------------------------------------------ |
 | keyup()    | 键盘按键被松开时触发   持续触发  （能识别功能键）            |
-| keydown()  | 键盘按键被按下时触发 持续触发  （能识别功能键）              |
+| keydown()  | 键盘按键被按下时触发   持续触发  （能识别功能键）            |
 | keypress() | 键盘按键被按下时并抬起触发  （不能识别功能键，如F1、shift、CTRL、方向键） |
 
 #### 表单
@@ -204,7 +204,7 @@ mouseover事件和mouseenter事件，都是鼠标进入一个节点时触发。�
 | focus()  | 表单元素 获得焦点                                            |
 | blur()   | 表单元素  失去焦点                                           |
 | change() | 当内容发生改变的时候 并 **失去焦点**触发，一般用在  input select 标签上 |
-| input()  | 当内容改变的时候触发 (不兼容 低版本的 ie，但比input更常用)   |
+| input()  | 当内容改变的时候触发 (不兼容 低版本的 ie，但比change更常用)  |
 | submit() | 当点击了submit  按钮后，form标签会触发这个事件。             |
 | reset()  | 当点击了reset  按钮后，form标签会触发这个事件。              |
 | select() | 当表单里面的文字被选中后触发，不仅表单，别的标签也能触发这个事件。 |
@@ -301,9 +301,9 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 > this：指向标签本身（含文本）
 >
-> e.target：指向所触发的地方（如，点击了子元素，则显示子元素标签）
+> e.target：指向所触发的地方（如，点击了子元素，则显示子元素标签）（比如点击子元素，父元素的监听回调函数中的e.target就指向子元素）
 
-##### 阻止默认事件` e.preventDefault()`
+##### 阻止默认事件 ` e.preventDefault()`
 
 阻止事件发生时的默认行为
 如 点击`<a>`标签时，会跳转到其herf的地址，在阻止其发生后，点击`<a>`标签后不会发生跳转
@@ -333,7 +333,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 注：e.returnValue = false 也能进行阻止默认事件，并且兼容ie
 
-##### 阻止事件冒泡`e.stopPropagation()`
+##### 阻止事件冒泡 `e.stopPropagation()`
 
 正常情况下，若父元素和子元素触发条件相同，则在触发子元素时，父元素也会触发；添加了阻止事件冒泡后，可以阻止父元素触发
 
@@ -390,7 +390,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 关键功能键属性
 
-> **false为没按，true为按了**
+> 以下属性值，**false为没按，true为按了**
 >
 > ctrlKey：CRTL键
 >
@@ -409,7 +409,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 作用：提高程序的性能，因为只操作了一次 DOM 
 
-简单来说：不给予子元素注册事件，只给父元素注册事件，把处理代码放到父元素中执行
+简单来说：不给予子元素注册事件，只给父元素注册事件，把处理代码放到父元素中执行（利用了e.target的特性）
 
 例：
 
@@ -460,7 +460,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 ![dom_inner](..\image\dom_inner.png)
 
-结果：										![dom_inner_result](..\image\dom_inner_result.png)
+结果：														![dom_inner_result](..\image\dom_inner_result.png)
 
 即，在原有标签的基础上又新增了一个标签
 
@@ -470,7 +470,7 @@ DOM 2级 事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡�
 
 ![dom_innerText](..\image\dom_innerText.png)
 
-结果：![image-20210924114536124](C:\Users\王泽\AppData\Roaming\Typora\typora-user-images\image-20210924114536124.png)
+结果：															<img src="..\image\dom_innerText_result.png" alt="dom_innerText_result" style="zoom:150%;" />
 
 即，只打印文字，不会新增一个标签
 
@@ -522,7 +522,7 @@ tagname同class
 
 即，name的value获取的方式也是一个集合（**伪数组**），并且通过value可以获取和设置input等标签的内容
 
-如：iPt [ 0 ] .value = '牛逼！';		结果就会改变input里面的value
+如：`iPt [0].value = '牛逼！';`		结果就会改变input里面的value
 
 注：只有input这种才用value来获取和改变标签内容，其他全部用innerHTML与innerText
 
@@ -530,13 +530,14 @@ tagname同class
 
 #### documen.getElementByTagName
 
-通过标签名获取元素
-
-语法：documen.getElementByTagName( ' p ' )
-
-参数：标签名			如 p，span，div
-
-返回值：元素对象的集合（**伪数组**，其数组中的元素是对象）
+> 语法：`documen.getElementByTagName('标签名')`
+>
+> 参数：标签名			如 p，span，div
+>
+> 作用：通过标签名获取元素
+>
+> 返回值：元素对象的集合（**伪数组**，其数组中的元素是对象）
+>
 
 例：获取 ul 下的 li
 
@@ -568,19 +569,17 @@ tagname同class
 
 #### querySelector
 
-**注：括号内如果是id，必须加 #	；	如果是类，必须加 .		否则会被当成标签处理**
-
 （H5新增）
 
-语法：document.querySelector ( ' ' )		或者		XX.querySelector ( ' ' )	（作用：获取XX下的第一个子元素）
-
-返回与该模式匹配的**第一个元素**
-
-注：
-
-> 括号内可以传入css选择符（#、. ）
+> 语法：`document.querySelector('')`		或者		`XX.querySelector('')`	（作用：获取XX下的第一个子元素）
 >
-> 括号内可以选择父级元素下的某个子集元素		如：`document.querySelector ( ' table > tbody ' )`，获取table标签下的tbody标签
+> 返回与该模式匹配的**第一个元素**
+>
+> 注：
+>
+> > 1、**括号内如果是id，必须加 #	；	如果是class，必须加 .		否则会被当成标签处理**
+> >
+> > 2、括号内可以选择父级元素下的某个子集元素		如：`document.querySelector('table > tbody')`，获取table标签下的tbody标签
 
 例：获取ul下第一个 li
 
@@ -609,9 +608,10 @@ tagname同class
 
 （H5新增）
 
-语法：document.querySelectorAll ( ' ' )		或者		XX.querySelectorALL ( ' ' )	（作用：获取XX下的所有子元素）
-
-返回与该模式匹配的**所有元素**，且为一个**伪数组**
+> 语法：`document.querySelectorAll('')`		或者		`XX.querySelectorALL('')`	（作用：获取XX下的所有子元素）
+>
+> 返回：与该模式匹配的**所有元素**，且为一个**伪数组**
+>
 
 ### 特殊标签的获取
 
@@ -623,7 +623,7 @@ tagname同class
 
 返回head元素：document.head
 
-返回标题内容元素：document.title，并且何以更改标题document.title = ‘   xxx   ’
+返回标题内容元素：document.title，并且何以更改标题 `document.title = 'xxx'`
 
 ------
 
@@ -631,24 +631,30 @@ tagname同class
 
 ### 属性设置
 
-#### 方法一
+#### 方法一：打点修改
 
-> 语法：dom.属性名 = xxx ;
+> 语法：`dom.属性名 = xxx;`
 >
 > 如：
 >
 > ```js
 > var btn = document.querySelector("btuuon");	//获取点击
 > btn.onclick = function(){
->     btn.value = '属性value改变'
+>      btn.value = '属性value改变'
 > }
 > ```
 >
-> 注：给`<a>`标签触发事件时，需要取消默认事件	
-> 方法：执行一个空事件
-> 给`<a>`的`herf`一个`javascript:;`	或者	给`<a>`的`herf`一个`javascript:void(0);`
+> 注：
+>
+> > 给`<a>`标签触发事件时，需要取消默认事件	
+> >
+> > 方法：执行一个空事件：
+> >
+> > > 给`<a>`的`herf`一个`javascript:;`	
+> > >
+> > > 或者	给`<a>`的`herf`一个`javascript:void(0);`
 
-#### 方法二
+#### 方法二：setAttribute
 
 > 语法：`dom.setAttribute(prop, value)`
 >
@@ -662,9 +668,13 @@ tagname同class
 
 #### 设置行内样式
 
-可以在标签获取后（即用document.getElementsByXXX）后，在其后面用.style来选择样式
+可以在标签获取后（即用`document.getElementsByXXX`）后，在其后面用`.style`来选择样式
 
 ##### 单个样式设置
+
+> 语法：`dom.style = ''`
+>
+> 注：凡是CSS样式里面有 - 的，都取消掉 - ，换成**驼峰命名** ；等号后面必须有引号
 
 例：
 
@@ -674,47 +684,59 @@ bg.style.backgroundColor = '#FADCFA';
 bg.style.fontSize = '20px';
 ```
 
-注：凡是CSS样式里面有 - 的，都取消掉 - ，换成**驼峰命名** ；等号后面必须有引号
-
 ##### 复合样式设置
 
-批量修改：`XXX.style.cssText = '  XXX  '  +  '  XXX  ' + ....;`	(可以换行)
+批量修改：
 
-或			   `XXX.style.cssText = '  XXX  ;  XXX  ;  '	;`	（这个不能换行）
-
-或	es6中的模板字符串：
-
-```js
- XXX.style.cssText = ` XXX  ;  XXX  ; `
-```
-
- (这个可以换行)（ ` ）（目的：防止引号冲突）
-
-即可做到对一个标签的CSS修改多样（若JS里没有CSS已有的代码，则保留CSS效果，即CSS里有长宽但JS没有却仍保留CSS的长宽）
+> 语法：	以下xxx一般为 `属性值:属性名`，如 `color: red`
+>
+> > 1、`XXX.style.cssText = 'XXX'  +  'XXX' + ....`	(可以换行)
+> >
+> > 2、`XXX.style.cssText = 'XXX ; XXX'`	（不能换行）
+> >
+> > 3、es6中的模板字符串：
+> >
+> > ```js
+> >  XXX.style.cssText = `XXX ; XXX ;`		//(可以换行)
+> > ```
+> >
+> >  （ 反引号` ）（目的：防止引号冲突）
+>
+> 作用：做到对一个标签的多个样式进行修改（保留CSS中不和JS冲突的样式。即CSS里有长宽但JS没有则保留CSS的长宽）
+>
+> 注：也需要驼峰命名法
 
 如：
 
 ```js
-btn.style.cssText = 'color : red' + 'backgroundColor : pink'
+btn.style.cssText = 'color: red' + 'backgroundColor: pink'
 ```
-
-注：也需要驼峰命名法
 
 ### 设置元素的类名（className）
 
-`XXX.className = 'XX'`
-
-注：不需要加 ' . ' ，且可以增加多个（直接空格隔开就好）					使用行内样式较多，类名较少
+> 语法：`XXX.className = '类名1 类名2'`
+>
+> 注：
+>
+> > 1、不需要加 ' . ' 
+> >
+> > 2、且可以增加多个（直接空格隔开就好）
+> >
+> > 3、使用行内样式较多，类名较少
 
 例：`btn.className = 'cleanfix bd'`				此时btn所绑定的标签会多cleanfix和bd两个类名
 
-注：给标签追加类名时，用传统方法（xxx.className = ' xxxx '）会导致类名覆盖
+#### 覆盖类名的隐患和解决办法
 
-解决办法：`xxx.classList.add('xx')`	追加名为xx的类（这是一个方法）
+给标签追加类名时，用该方法（`xxx.className = 'xxxx'`）会导致类名覆盖
 
-`xxx.classList.remove('xx')`		删除xx类
+解决办法：
 
-`xxx.classList.toggle('xx')`		切换xx类
+> `xxx.classList.add('xx')`	追加名为xx的类（这是一个方法）
+>
+> `xxx.classList.remove('xx')`		删除xx类
+>
+> `xxx.classList.toggle('xx')`		切换xx类
 
 ------
 
@@ -760,7 +782,7 @@ btn.style.cssText = 'color : red' + 'backgroundColor : pink'
 
 得到的是距离元素最近的父节点,如果如果找不到就就返回为null
 
-注：parentElement也是寻找父节点，但是有的游览器不兼容
+注：parentElement也是寻找父节点，但是有的浏览器不兼容
 
 例：
 
@@ -858,19 +880,15 @@ btn.style.cssText = 'color : red' + 'backgroundColor : pink'
 
 #### 同级节点
 
-语法：XX.xxx
+##### 包含 文本节点 和 属性节点
 
-如：ul.previousSibling
-
-##### 包含文本节点 和 属性节点
-
-注：一般一个标签，[0]是标签内的文本，[1]才是标签本身（标签本身含文本）
+注：一般一个标签，`[0]`是标签内的文本，`[1]`才是标签本身（标签本身含文本）
 
 > 上一个兄弟`previousSibling`
 >
 > 下一个兄弟`nextSibling`
 
-##### 不包含文本的同级节点
+##### 不包含 文本 的同级节点
 
 > 上一个兄弟`previousElementSibling`
 >
@@ -884,9 +902,11 @@ btn.style.cssText = 'color : red' + 'backgroundColor : pink'
 
 ###### document.write
 
-可以增加节点 或 文本
-
-语法：document.write ( ' ' )
+> 语法：`document.write('')`
+>
+> 作用：增加 标签 或 文本
+>
+> 注：通过这种方式创建的节点，当页面加载完成之后再调用该方法，并会**导致页面重绘**（会覆盖原本的标签）	因此不常用
 
 例：
 
@@ -895,45 +915,58 @@ doucument.write('这是一个文本');
 doucument.write('<p>这是P标签</p>');
 ```
 
- **注**：通过这种方式创建的节点，当页面加载完成之后再调用该方法，并会导致页面重绘（会覆盖原本的标签）	因此不常用
-
 ###### innerHTML
 
-增加节点的详情在最上面
-
-XXX.innerHTML获取的是该标签内的 文本	；	因此在直接赋值时会将原有标签的文本覆盖掉（解决办法：拼接 +=）
+> 语法：`dom.innerHTML = ''`
+>
+> 作用：增加标签，详情在最上面
+>
+> 注：直接调用`dom.innerHTML`是获取的是该标签内的 文本
+> 因此在**直接赋值时会将原有标签的文本覆盖掉**（解决办法：**拼接 +=**）
 
 ##### 增加后不显示
 
 常搭配下列位置添加一起使用
 
+###### 创建文档树
+
+> 语法：`document.createDocumentFragment();`
+>
+> 作用：可以创建一个新的空白文档片段，类似于主dom树；用于包裹一整块节点，方便后面添加这一整块节点
+
 ###### 创建`doucument.creatElement`
 
-语法：doucument.creatElement ( ' ' )
-
-注：
-
-> 他只适用于创建元素；并且在未给其添加的位置时（即只创建），页面不显示			
+> 语法：`doucument.creatElement('')`
 >
-> 若要添加文本内容，可以结合innerHTML使用
+> 作用：创建节点
+>
+> 注：
+>
+> > 1、他只适用于创建元素；并且在未给其添加的位置时（即只创建），页面不显示			
+> >
+> > 2、若要添加文本内容，可以结合innerHTML使用
+>
 
-例：`var Li = document.createElement('li');`
+例：`var Li = document.createElement('li')`
 
 ###### 添加
 
-> 前面追加：node.insertBefore(child , 指定元素)
+> 语法：
 >
-> 后面追加：node.appendChild(child , 指定元素)
-
-参数：
-
-> node：父级元素
+> > 前面追加：`node.insertBefore(child , 指定元素)`
+> >
+> > 后面追加：`node.appendChild(child , 指定元素)`
 >
-> child：子级元素
+> 参数：
 >
-> 指定元素：需要添加的位置（可以不写，不写则默认追加在最后）
+> > node：父级元素
+> >
+> > child：子级元素
+> >
+> > 指定元素：需要添加的位置（可以不写，不写则默认追加在最后）
+>
 
-如：Li.appendChild ( ' li ' )
+如：`Li.appendChild('li')`
 
 ```html
 //前面追加的案例
@@ -957,33 +990,35 @@ XXX.innerHTML获取的是该标签内的 文本	；	因此在直接赋值时会�
 </body>
 ```
 
-注：`document.createDocumentFragment();`可以创建一个新的空白文档片段，类似于主dom树
-
 #### 删除`removeChild`
 
-语法：node.removeChild ( child )
-
-从DOM中删除一个子节点，并返回删除的节点
-
-注：必须指定要删除的子节点
+> 语法：`node.removeChild(child)`
+>
+> 作用：从DOM中删除一个子节点，并返回删除的节点
+>
+> 注：必须指定要删除的子节点
+>
 
 #### 克隆（复制）`cloneNode`
 
-语法：node.cloneNode ( '参数' )
-
-返回调用该方法的节点的一个副本，也称克隆节点/拷贝节点
-
-参数：
-
-> 默认：不传参，即false
+> 语法：`node.cloneNode('参数')`
 >
-> true：深拷贝		 复制标签及其里面的内容
+> 返回：返回调用该方法的节点的一个副本，也称克隆节点/拷贝节点
 >
-> false：浅拷贝		只复制标签，不复制标签内的内容（即不包含text）
+> 参数：
+>
+> > 默认：不传参，即false
+> >
+> > true：深拷贝		 复制标签及其里面的内容
+> >
+> > false：浅拷贝		只复制标签，不复制标签内的内容（即不包含text）
+>
 
 ------
 
 ## 元素尺寸
+
+语法：`dom.xxx`，如 `dom.offsetTop = ''`
 
 ### 偏移尺寸`offset`
 

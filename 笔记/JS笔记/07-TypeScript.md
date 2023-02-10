@@ -95,6 +95,28 @@ bigint：bigint
 > 语法：`let arr: [number, number] = [123, 465]`
 > 意义：此时的数组有且只有两个数，且必须为number类型
 
+#### 数组对象
+
+表示数组里面的元素为对象
+
+> 语法：
+>
+> ```ts
+> interface type {
+>     a: string,
+>     b: number
+> }
+> 
+> let arr = <type[]>[
+>     {
+>         a: 'aa',
+>         b: 123,
+>     }
+> ] 
+> ```
+>
+> 
+
 ### 函数
 
 > 定义：指函数的参数和返回值的类型
@@ -104,7 +126,7 @@ bigint：bigint
 > | 单独指定参数、返回值的类型                                   | 同时指定参数、返回值的类型                                   |
 > | ------------------------------------------------------------ | ------------------------------------------------------------ |
 > | `function add(num1: number, num2: number): number { return 1 }` | 无                                                           |
-> | `let add = (num1: number, num2: number): number) => { return 1 }` | `let add: (num1: number, num2: number) => number = (num1, num2) => { return 1 }` |
+> | `let add = (num1: number, num2: number): number => { return 1 }` | `let add: (num1: number, num2: number) => number = (num1, num2) => { return 1 }` |
 >
 > **注**：如果函数的返回值进行了类型声明，则必须有return；如果没return，则应声明为 void 或 any
 
@@ -270,7 +292,7 @@ let obj: B = {x: 1, y: 2, z: 3}
 > >
 > > 如：`let app = document.querySelector("#app") as HTMLAnchorElement`
 > >
-> > 2、<> 语法
+> > 2、**<> 语法**
 > >
 > > 如：`let app = <HTMLAnchorElement>document.querySelector("#app")`
 
