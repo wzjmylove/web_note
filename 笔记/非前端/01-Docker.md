@@ -441,7 +441,7 @@ docker -tf --tail num 容器id
 例子：
 
 ```shell
-docker run -d centos /bin/sh -C "while true;do echo wangze;sleep 1;done"		# 表示后台运行centos，且centos启动一个服务
+docker run -d centos /bin/sh -c "while true;do echo wangze;sleep 1;done"		# 表示后台运行centos，且centos启动一个服务
 # while true;do echo wangze;sleep 1;done 表示每隔一秒循环打印wangze
 ```
 
@@ -472,9 +472,50 @@ docker inspect 容器id
 
 #### 进入正在运行的容器
 
-容器一般是使用后台方式运行的
+容器一般是使用后台方式运行的，经常需要进入容器以修改一些配置
+
+方式一（常用）：
 
 ```shell
 docker exec -it 容器id
+# 表示进入容器后开启一个新的终端，可以在里面操作
 ```
 
+如：
+
+```shell
+[root@VM-24-9-centos ~]# docker exec -it bf6c1b679ea0 /bin/bash
+[root@bf6c1b679ea0 /]# ls
+bin  etc   lib	  lost+found  mnt  proc  run   srv  tmp  var
+dev  home  lib64  media       opt  root  sbin  sys  usr
+[root@bf6c1b679ea0 /]# ps -ef
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 Feb07 pts/0    00:00:00 /bin/bash
+root        14     0  0 09:23 pts/1    00:00:00 /bin/bash
+root        29    14  0 09:23 pts/1    00:00:00 ps -ef
+```
+
+方式二：
+
+```shell
+docker attach 容器id	# 不需要-it
+# 表示进入容器正在执行的终端，不会启动新的进程
+```
+
+如：
+
+```shell
+[root@VM-24-9-centos ~]# docker attach bf6c1b679ea0
+wangze
+wangze
+wangze
+wangze
+```
+
+#### 容器内文件拷贝到主机上
+
+```shell
+docker cp 容器id:容器内文件路径 目的主机目录 # 注意是以当前命令路径来实现相对路径
+```
+
+注：此方法不管容器是否运行，都能实现拷贝
