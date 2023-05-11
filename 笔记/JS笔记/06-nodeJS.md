@@ -886,7 +886,7 @@ cors方法
 ```js
 //本地服务器解决跨域
 app.all('*', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', '*');	//这一句就是解决跨域
     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.header('Access-Control-Allow-Methods', '*');		//允许请求方法：如post、get、put
@@ -897,7 +897,7 @@ app.all('*', function (req, res, next) {
 
 #### 托管静态资源
 
-> 作用：通过它，我们可以非常方便地创建一个静态资源服务器
+> 作用：通过它，我们可以非常方便地创建一个静态资源服务器，外部就可以通过url输入访问到指定文件夹下的所有资源
 >
 > 语法：`app.use(express.static('文件夹'))`
 >
@@ -912,6 +912,8 @@ app.all('*', function (req, res, next) {
 > > 2、如果需要托管多个静态资源目录，请多次调用 express.static() 函数
 > >
 > > 如果多个静态资源文件夹都有同名文件，则会按照顺序查找（先找第一个文件夹，如果没有就找第二个；如果有就不往后面找了）
+> >
+> > 3、路径是相对于该js文件的，但有时候相对路径无效，可以用__dirname来拼凑绝对路径
 
 挂载路径前缀
 
@@ -939,7 +941,7 @@ express 路由
 >
 > > 语法：`app.METHOD(PATH, HANDLER)`
 > >
-> > 如：`app.post('/suer', (req,res) => {})`
+> > 如：`app.post('/user', (req,res) => {})`
 
 路由的匹配过程
 
@@ -957,9 +959,9 @@ express 路由
 
 ##### 直接挂在到app上
 
-如：`app.post('/suer', (req,res) => {})`
+如：`app.post('/user', (req,res) => {})`
 
-问题：随着代码量增多，挂载的路由会增加，文件体积过大
+问题：随着代码量增多，挂载的路由会增加，文件体积过大+
 
 ##### 模块化路由
 
@@ -1052,7 +1054,7 @@ app.listen(8080, () => {
 > 语法：
 >
 > ```js
-> function (req, res , next){
+> function (req, res, next){
 > 	next();
 > }
 > ```
@@ -1062,7 +1064,7 @@ app.listen(8080, () => {
 > 如：
 >
 > ```js
-> let mv = (req, res ,next) => {
+> let mv = (req, res, next) => {
 >     doSomethings;
 >     next();
 > }
