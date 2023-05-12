@@ -1,3 +1,11 @@
+# tsconfig.json
+
+参考：https://www.wenjiangs.com/article/immsdbbt.html
+
+## 简介
+
+`tsconfig.json` 是 TypeScript 编译器的配置文件，用于指定编译 TypeScript 代码时的编译选项和编译目标等信息。通过修改该文件，可以定制 TypeScript 编译器的行为，例如指定编译目标、启用或禁用特定的语言特性、设置代码检查规则等。
+
 # TypeScript
 
 渐进式，静态类型编程语言

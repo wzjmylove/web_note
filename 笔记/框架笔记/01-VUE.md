@@ -143,6 +143,16 @@ vm.$mount('#app');
 
 ## 响应式原理
 
+响应式是指函数与数据的关联
+
+> 1、被监控的函数：vue2的watcher，vue3的effect（全称是reactive effect，是一个内部函数）
+> 都是监控某一个函数的执行
+> 日常中会被监控的函数有：render、computed、watch、watchEffect
+>
+> 2、函数运行期间用到了响应式数据：ref、reactive
+>
+> 3、响应式数据变化会导致函数重新运行
+
 > Vue2：es5中的  Object.defineProperty
 >
 > Vue3：es6中的  proxy
